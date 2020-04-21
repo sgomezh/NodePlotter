@@ -5,54 +5,91 @@ import numpy as np
 import tkinter
 import numpy as np
 import subprocess
-import node as nd
+import state
 import properties as pr
 import function1 as f1
 import function2 as f2
 import paramiko
+import random
 # ---------------------------------------------------- GENERADOR DE CLAVES ----------------------------------------------------------
 # Se inicializa el mapa y se crea la primera casilla (nodo raiz)
-NodeMap = {}
-NodeMap[0] = nd.Nodo(None, 0)
+StateMap = {}
+StateMap[0] = state.State(None, 0)
 
+def BestState():
+    bestEval = -1.0
+    bestState = None
+    for (key,state) in StateMap.items():
+        ev = state.eval()
+        if bestEval < ev:
+            bestEval = ev
+            bestState = key
+    return bestState
 
 # Con la misma clave utilizada para agregar un nodo al grafo, se agrega un elemento de la clase Nodo, de modo que se cree un diccionario de referencias entre el grafo y el mapa
-def CreateNode(ChildKey, ParentKey):
+def CreateState(ChildKey, ParentKey):
 
     # La key que se ocupa para el grafo, es la misma que se ocupa para el mapa
     # Se hace una instancia de la clase Nodo (vacio)
-    NewNode = nd.Nodo(ParentKey, ChildKey)
+    NewState = state.State(ParentKey, ChildKey)
     
     # Se guarda el nodo inicializado en la misma posicion del grafo
-    NodeMap[ChildKey] = NewNode
+    StateMap[ChildKey] = NewState
     
-    return NewNode
+    return NewState
+
+
+
+# --- Fake simulations ------- #
+def Simulation(ParentKey, ChildKey, NOS):
+    for i in range(0,NOS):
+        # Crea un nodo para luego insertarlo en el mapa y el grafo
+        NewState = CreateState(ChildKey, ParentKey) 
+              
+        # Como ya esta creado el nuevo nodo, se mete a la lista de "hijos visibles" del nodo
+        (StateMap[ParentKey].ChildList).append(ChildKey) 
+     
+        Actions = 10000 # fake number
+        
+        #fake eval
+        if ParentKey ==0:
+            Evaluation = random.uniform(28, 30)
+        else:
+            Evaluation = StateMap[ParentKey].FirstEv + random.uniform(-0.5, 0.5) 
+              
+        # Llama al metodo que inicializa el nodo 
+        StateMap[ParentKey].AddSimulation(Evaluation, Actions) 
+              
+        # Se llama a simular el nodo para inicializarlo (Ver clase Nodo)
+        StateMap[ChildKey].AddSimulation(Evaluation, 0)
+       
+        ChildKey=ChildKey+1
 
 # --------------------------------------------------------- SIMULACION DE UN NODO ----------------------------------------------------
-NodeSimulations = 0
+StateSimulations = 0
 # Se recibe una evaluacion y un numero de acciones a partir del simulador. A partir de ello, se rellena el nodo del mapa y se agregan hijos a un nodo del grafo
-def Simulation(ParentKey, ChildKey, NOS):
+def TrueSimulation(ParentKey, ChildKey, NOS):
 
-    global NodeSimulations
+    global StateSimulations
     
-    if NodeSimulations == 0:
-        # NodeSimulations almacena una cantidad inicial minima de simulaciones que deben aparecer al apretar un nodo
-        NodeSimulations = NOS #NOS = number of simulations   
+    if StateSimulations == 0:
+        # StateSimulations almacena una cantidad inicial minima de simulaciones que deben aparecer al apretar un nodo
+        StateSimulations = NOS #NOS = number of simulations   
     
     # Se crea un arreglo que guardara el camino desde la raiz al nodo actual
     pathStack = [] 
     
     # Se crea una copia auxiliar que guarde la  informacion del nodo actual
-    AuxNode = NodeMap[ParentKey] 
-    pathStack.insert(0,len(NodeMap[ParentKey].ChildList)+1)
+    AuxState = StateMap[ParentKey] 
+    pathStack.insert(0,len(StateMap[ParentKey].ChildList)+1)
     
-    while AuxNode.IdLastChild != None: 
+    while AuxState.IdLastChild != None: 
     
         # Se mete a la pila el nuevo hijo
-        pathStack.insert(0,AuxNode.IdLastChild) 
+        pathStack.insert(0,AuxState.IdLastChild) 
         
         # Se obtiene el padre de nodo (con toda su informacion para crear el camino hacia arriba) 
-        AuxNode = AuxNode.Parent 
+        AuxState = AuxState.Parent 
         # Se vuelve a iterar siempre y cuando su IdChild no None, que es el caso del nodo raiz
    
     
@@ -81,15 +118,13 @@ def Simulation(ParentKey, ChildKey, NOS):
      
     # Se hace una copia del lector para
     simulations = reader
-    
-    for i in range(NodeSimulations-1):
+      
+    for i in range(StateSimulations-1):
        simulations = simulations + "\;" + reader.replace(reader[len(reader)-2], str(int(number)+i+1))
        
-       print("Simulations=", simulations)
+    print("Simulations=", simulations)
     
     # Se llama al simulador para obtener la evaluacion y numero de acciones de un caso
-    
-
     #ssh = paramiko.SSHClient()
     #ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())  
     #ssh.connect("158.251.88.197", username = "tifa", password = "ScHrOdL223")
@@ -97,32 +132,23 @@ def Simulation(ParentKey, ChildKey, NOS):
     output = str(subprocess.check_output("ssh tifa@158.251.88.197 ./BSG_SIMULATOR BR/BR10.txt -i 1 --min_fr=0.98 -t 10 -f BR --actions="+simulations, shell=True))
     #output = str(subprocess.check_output("echo %PATH%" , shell=True))
     print(output)
-    #command = "ssh tifa@158.251.88.197 ./BSG_SIMULATOR BR/BR10.txt -i 1 --min_fr=0.98 -t 10 -f BR --actions=" + simulations
-    #pipe = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    #while True:
-    #    line = pipe.stdout.readline()
-    #    if line:
-    #        print("line = " + line)
-    #    if not line:
-    #        break
-    #return 
+
     # Se separa el output por salto de linea 
     output = output.split('\\n')
     
     # Recorre toda la cadena del output para poder encontrar el inicio de la simulacion
     for i in range(len(output)): 
-          
-          
+             
           # La variable position almacena la posicion del inicio de esta cadena, en caso de que no se encuentre, devuelve -1
           position = output[i].find("##start simulation") 
           
           if position != -1: 
               
               # Crea un nodo para luego insertarlo en el mapa y el grafo
-              NewNode = CreateNode(ChildKey, ParentKey) 
+              NewState = CreateState(ChildKey, ParentKey) 
               
               # Como ya esta creado el nuevo nodo, se mete a la lista de "hijos visibles" del nodo
-              (NodeMap[ParentKey].ChildList).append(ChildKey) 
+              (StateMap[ParentKey].ChildList).append(ChildKey) 
      
               # Se avanza un espacio para guardar las acciones
               path = output[i+1] 
@@ -138,11 +164,14 @@ def Simulation(ParentKey, ChildKey, NOS):
               Evaluation = float(output[i+2])
               
               # Llama al metodo que inicializa el nodo 
-              NodeMap[ParentKey].AddSimulation(Evaluation, Actions) 
+              StateMap[ParentKey].AddSimulation(Evaluation, Actions) 
               
               # Se llama a simular el nodo para inicializarlo (Ver clase Nodo)
-              NodeMap[ChildKey].AddSimulation(Evaluation, 0)
+              StateMap[ChildKey].AddSimulation(Evaluation, 0)
+            
+              
+              ChildKey=ChildKey+1
                             
     print("La evaluacion del nodo ", ParentKey, "es ", Evaluation)
           
-    return ParentKey, NodeSimulations
+    return ParentKey, StateSimulations

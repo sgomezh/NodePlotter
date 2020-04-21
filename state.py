@@ -10,20 +10,18 @@ import properties as pr
 import function1 as f1
 import function2 as f2
 # ------------------------ DEFINICION DE CLASE NODO Y SUS METODOS -------------------------
-# Esta clase define la informacion que se guarda en el nodo (cada nodo se guarda en el mapa NodeMap)
+# Esta clase define la informacion que se guarda en el nodo (cada nodo se guarda en el mapa StateMap)
 
 
-class Nodo:
-    hashkey_ = 0
-    def __init__(self, Parent, hashKey):  # Constructor del nodo
+class State:
+    id_ = 0
+    bestEv = 0.0
+    worstEv = 100.0
+    
+    def __init__(self, Parent, id):  # Constructor del nodo
         
-        self.hashKey = hashKey # Clave o identificador del nodo. Esta es la que se asocia con NodeMap
-        
-        # Se declara la variable hashkey global para poder usarla en otros metodos
-        
-        global hashkey_
-        hashkey_ = hashKey
-        
+        self.id = id # Clave o identificador del nodo. Esta es la que se asocia con StateMap
+              
         self.FirstEv = 0 #Primera evaluacion del nodo, una vez asignada no se puede cambiar
         self.CurrentEv = 0 # Almacena la evaluacion actual, cambia cada vez que se simula el nodo
         self.MeanEv = 0  # Promedio de todas las evaluaciones obtenidas
@@ -37,11 +35,15 @@ class Nodo:
         self.NumSimulations = 0 # Numero de veces que el nodo ha sido simulado
         self.IdLastChild = None
         self.Parent = None
-        self.NodeEv = 0
+        self.StateEv = 0
         if Parent != None:
-            self.Parent = sm.NodeMap[Parent]
+            self.Parent = sm.StateMap[Parent]
             self.IdLastChild = len(self.Parent.ChildList)+1
 
+# ------------------------ Evaluación de un estado ---------------------- #
+    def eval(self):
+        return self.FirstEv
+            
 # ------------------------ PROMEDIO DE LAS EVALUACIONES -------------------------
 
     # Calcula el promedio cada vez que se hace una simulacion con el nuevo dato (nueva evaluacion)
@@ -92,6 +94,13 @@ class Nodo:
             
         if Evaluation < self.WorstEv:
             self.WorstEv = Evaluation
+        
+        ## update of global variables
+        if Evaluation > State.bestEv:
+            State.bestEv = Evaluation
+            
+        if Evaluation < State.worstEv:
+            State.worstEv = Evaluation
             
         # Se asigna el numero de acciones y segun la evaluacion se calcula el promedio y la desviacion estandar
         self.NumActions = Actions

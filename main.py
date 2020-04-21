@@ -6,7 +6,7 @@ import graphics as gp
 # ------------------------ LLAMADO DE FUNCIONES -------------------------
 
 # Esta variable almacena el numero de simulaciones que se haran por cada nodo
-NOS = 1
+NOS = 10
 
 # Se pregunta por la cantidad de nodos simulados a la vez, independientemente si es manual o automatico
 #NOS = int(input("Introduzca la cantidad de simulaciones por nodo: "))

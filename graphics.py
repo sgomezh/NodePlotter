@@ -20,14 +20,21 @@ def main(NOS):
             if event.type == pygame.MOUSEBUTTONDOWN:
                 x, y = event.pos
                 id = n_manipulator.get_node_id(x,y)
+                if id == -1: #ningun nodo seleccionado
+                    id = sm.BestState()
+                    x, y = n_manipulator.nodes[id].pos
+                    
+                
                 print("id= ", id)
-                id_child = n_manipulator.generate_son(x, y)
-                print("id_child= ", id_child)
-                sm.Simulation(id, id_child, NOS)
-                child = n_manipulator.nodes[id_child]
-                colorChild = pr.NodeColor(id_child)
-                child.color_to(colorChild)
-                child.size_to(id)
+                
+                id_first_child = n_manipulator.generate_son(x, y)
+                for i in range(1,NOS):
+                    n_manipulator.generate_son(x, y)
+                
+                print("id_child= ", id_first_child)
+                sm.Simulation(id, id_first_child, NOS)
+                
+                #n_manipulator.nodes[id_child].color_to(pr.StateColor(id_child))
 
             '''else:
                 print("apreto afuera") #tifa: aqui detecta si apreta afuera o no del nodo'''

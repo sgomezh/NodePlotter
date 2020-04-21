@@ -55,7 +55,7 @@ class Node:
         self.conected_nodes = []
         self.id = id_node
         print("id_node: ", id_node)
-        self.radius = pr.NodeSize(id_node)
+        self.radius = 10
         self.selected = False
         self.data = []
         self.data_string = []
@@ -85,10 +85,6 @@ class Node:
         """
         self.color_objetive = color_objetive
     
-    def size_to(self, key):
-
-        self.radius = pr.NodeSize(key)
-
     def update(self) -> None:
         """
         Actualiza el estado del nodo. Es necesario llamar este metodo cada
@@ -123,9 +119,7 @@ class Node:
         position = (pos_x, pos_y)
         pygame.draw.circle(surface, self.color, position, self.radius)
         if self.selected:
-            size = pr.NodeSize(self.id)
-            pygame.draw.circle(surface, (255, 255, 255), position, size)
-            #pygame.draw.circle(surface, (255, 255, 255), position, self.radius)  
+            pygame.draw.circle(surface, (255, 255, 255), position, self.radius)  
 
     def generate_son(self, pos: List[float, float],
                      color: List[int, int, int],

@@ -16,6 +16,7 @@ class NodeManipulator:
     # Lista de nodos
     nodes: List[nprop.Node]  # Nodos ordenados
     nodes_bd: List[List[nprop.Node]]  # Nodos ordenados por la profundidad
+    
 
     # Nodo seleccionado (Debajo del puntero)
     node_selected: [nprop.Node]
@@ -29,6 +30,7 @@ class NodeManipulator:
     camera: Camera
 
     def __init__(self, root_node: nprop.Node):
+        self.label = []
         self.nodes = [root_node]
         self.nodes_bd = [[root_node]]
         self.camera = Camera()
@@ -41,6 +43,8 @@ class NodeManipulator:
         """
         for node in self.nodes:
             node.update()
+            newColor = pr.StateColor(node.id) # tifa: Funcion que asigna un color
+            node.color_to(newColor)
 
         self.camera.update()
 
@@ -56,18 +60,27 @@ class NodeManipulator:
         # Actualizando informacion del nodo seleccionado
         if self.node_selected is not None:
             self.node_selected.selected = True
-            currentEv = str(sm.NodeMap[self.node_selected.id].CurrentEv)
-            firstEv = str(sm.NodeMap[self.node_selected.id].FirstEv)
-            meanEv = str(sm.NodeMap[self.node_selected.id].MeanEv)
-            bestEv = str(sm.NodeMap[self.node_selected.id].BestEv)
-            stdDev = str(sm.NodeMap[self.node_selected.id].StdDev)
-            Actions = str(sm.NodeMap[self.node_selected.id].NumActions)
+            currentEv = str(sm.StateMap[self.node_selected.id].CurrentEv)
+            firstEv = str(sm.StateMap[self.node_selected.id].FirstEv)
+            meanEv = str(sm.StateMap[self.node_selected.id].MeanEv)
+            bestEv = str(sm.StateMap[self.node_selected.id].BestEv)
+            stdDev = str(sm.StateMap[self.node_selected.id].StdDev)
+            Actions = str(sm.StateMap[self.node_selected.id].NumActions)
             #tifa: solo queda poner las variables en el texto. Imprime hacia el lado, no hacia abajo como deberia ser.
-            self.text = self.font.render("Nodo " + str(self.node_selected.id) + ", Evaluacion: " + currentEv ,
-                                         True, (255, 200, 200),
-                                         (40, 40, 40))
+            self.label = []
+            #self.label.append(self.font.render("Nodo " + str(self.node_selected.id), True, (255, 200, 200), (40, 40, 40)))
+            self.label.append(self.font.render("Ev: " + str(round(float(firstEv)*100)/100), True, (255, 200, 200), (40, 40, 40)))
+            self.label.append(self.font.render("Mean: " + str(round(float(meanEv)*100)/100), True, (255, 200, 200), (40, 40, 40)))
+            self.label.append(self.font.render("sd: " + str(round(float(stdDev)*100)/100), True, (255, 200, 200), (40, 40, 40)))
+
+            
+            
+            #self.text = self.font.render("Nodo " + str(self.node_selected.id) + "\nEvaluacion: " + currentEv ,
+             #                            True, (255, 200, 200),
+              #                           (40, 40, 40))
             
         else:
+            self.label = []
             self.text = self.font.render("", True, (255, 200, 200), )
 
     def draw(self, surface: pygame.Surface) -> None:
@@ -79,12 +92,18 @@ class NodeManipulator:
             node.draw(surface, self.camera)
 
         m_pos = pygame.mouse.get_pos()
-        surface.blit(self.text, (m_pos[0] + 10, m_pos[1]))
-
+        
+        for line in range(len(self.label)):
+            surface.blit(self.label[line],(m_pos[0]+10,m_pos[1]+(15*line)))
+        #else:
+         #   surface.blit(self.text, (m_pos[0] + 10, m_pos[1]))
+        
+        
     def get_node_id(self, clic_x: int, clic_y: int):
         for node in self.nodes:
             if node.in_body(clic_x, clic_y, self.camera):
                 return node.id
+        return -1 #ningun nodo fue seleccionado
 
     def generate_son(self, clic_x: int, clic_y: int) -> None:
         """
@@ -95,14 +114,12 @@ class NodeManipulator:
         id_nodo = -1
         for node in self.nodes:
            
-            newColor = pr.NodeColor(node.id) # tifa: Funcion que asigna un color
-            node.color_to(newColor)
-            print("Nodo: " + str(node.id) + ", Color: " + str(node.color))
+            #print("Nodo: " + str(node.id) + ", Color: " + str(node.color))
             if node.in_body(clic_x, clic_y, self.camera):
-                node.radius = node.radius +1 
+                node.radius = 10 + int(len(node.conected_nodes)/3)
                 # Generando nuevo nodo
-                color = pr.NodeColor(node.id) # tifa: Funcion que asigna un color
-                print("el color es: ", color)
+                color = pr.StateColor(node.id) # tifa: Funcion que asigna un color
+                #print("el color es: ", color)
                 #color = [200, 200, 200]
                 angle_objetive = random.random() * 2 * math.pi
 
