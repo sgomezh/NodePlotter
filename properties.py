@@ -44,10 +44,12 @@ def WorstMapEv():
 def NodeSize(key):
     
     # Se crea la lista que almacenar� todos los respectivos tama�os
-    node_size = 0
+    node_size = 10
 
-    # Se define el tama�o segun su simulacion
-    node_size = int(mt.log(sm.NodeMap[key].NumSimulations + 1))+10  
+    if key in sm.NodeMap:
+        # Se define el tama�o segun su simulacion
+        node_size = int(mt.log(sm.NodeMap[key].NumSimulations + 1))+10  
+
     keyStr = str(key)
     nodeSizeStr = str(node_size)
     print("El tamaño del nodo "+ keyStr + "es: " + nodeSizeStr)
