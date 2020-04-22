@@ -27,48 +27,41 @@ def BestState():
     return bestState
 
 # Con la misma clave utilizada para agregar un nodo al grafo, se agrega un elemento de la clase Nodo, de modo que se cree un diccionario de referencias entre el grafo y el mapa
-def CreateState(ChildKey, ParentKey):
-
+def CreateState(key, parent, actions, eval):
     # La key que se ocupa para el grafo, es la misma que se ocupa para el mapa
     # Se hace una instancia de la clase Nodo (vacio)
-    NewState = state.State(ParentKey, ChildKey)
+    NewState = state.State(parent, key)
     
     # Se guarda el nodo inicializado en la misma posicion del grafo
-    StateMap[ChildKey] = NewState
+    StateMap[key] = NewState
+
+    # Como ya esta creado el nuevo nodo, se mete a la lista de "hijos visibles" del nodo
+    (StateMap[parent].ChildList).append(key) 
     
-    return NewState
+    StateMap[parent].AddSimulation(eval, actions) 
+              
+    # Se llama a simular el nodo para inicializarlo (Ver clase Nodo)
+    StateMap[key].AddSimulation(eval, 0)
 
-
+     
 
 # --- Fake simulations ------- #
-def Simulation(ParentKey, ChildKey, NOS):
+def FakeSimulation(ParentKey, ChildKey, NOS):
     for i in range(0,NOS):
-        # Crea un nodo para luego insertarlo en el mapa y el grafo
-        NewState = CreateState(ChildKey, ParentKey) 
-              
-        # Como ya esta creado el nuevo nodo, se mete a la lista de "hijos visibles" del nodo
-        (StateMap[ParentKey].ChildList).append(ChildKey) 
-     
-        Actions = 10000 # fake number
-        
         #fake eval
         if ParentKey ==0:
             Evaluation = random.uniform(28, 30)
         else:
-            Evaluation = StateMap[ParentKey].FirstEv + random.uniform(-5, 0.1) 
-              
-        # Llama al metodo que inicializa el nodo 
-        StateMap[ParentKey].AddSimulation(Evaluation, Actions) 
-              
-        # Se llama a simular el nodo para inicializarlo (Ver clase Nodo)
-        StateMap[ChildKey].AddSimulation(Evaluation, 0)
-       
+            Evaluation = StateMap[ParentKey].FirstEv + random.uniform(-5, 0.1)         
+        
+        CreateState(ChildKey,ParentKey,10000, Evaluation)
+
         ChildKey=ChildKey+1
 
 # --------------------------------------------------------- SIMULACION DE UN NODO ----------------------------------------------------
 StateSimulations = 0
 # Se recibe una evaluacion y un numero de acciones a partir del simulador. A partir de ello, se rellena el nodo del mapa y se agregan hijos a un nodo del grafo
-def TrueSimulation(ParentKey, ChildKey, NOS):
+def Simulation(ParentKey, ChildKey, NOS):
 
     global StateSimulations
     
@@ -143,33 +136,23 @@ def TrueSimulation(ParentKey, ChildKey, NOS):
           position = output[i].find("##start simulation") 
           
           if position != -1: 
-              
-              # Crea un nodo para luego insertarlo en el mapa y el grafo
-              NewState = CreateState(ChildKey, ParentKey) 
-              
-              # Como ya esta creado el nuevo nodo, se mete a la lista de "hijos visibles" del nodo
-              (StateMap[ParentKey].ChildList).append(ChildKey) 
-     
+
               # Se avanza un espacio para guardar las acciones
               path = output[i+1] 
               
               # Se separa el numero de simulaciones del nodo
               path = path.split(';')
-              
+            
               # Se separa el numero de acciones del nodo
               Actions = int(path[depth-1].split('/')[1])
               
               # Se obtiene la evaluacion a traves del simulador
               # Luego se avanza dos espacios para guardar la evaluacion del nodo 
               Evaluation = float(output[i+2])
-              
-              # Llama al metodo que inicializa el nodo 
-              StateMap[ParentKey].AddSimulation(Evaluation, Actions) 
-              
-              # Se llama a simular el nodo para inicializarlo (Ver clase Nodo)
-              StateMap[ChildKey].AddSimulation(Evaluation, 0)
-            
-              
+                
+              # Crea un nodo para luego insertarlo en el mapa y el grafo
+              NewState = CreateState(ChildKey, ParentKey, Actions, Evaluation) 
+                        
               ChildKey=ChildKey+1
                             
     print("La evaluacion del nodo ", ParentKey, "es ", Evaluation)
