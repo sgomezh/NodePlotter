@@ -3,6 +3,7 @@ from nodeProp import Node #tifa: importa la clase nodo
 import node_manipulator
 import simulation as sm
 import properties as pr
+from camera import Camera
 
 def main(NOS):
     raiz = Node([27, 27], [200, 200, 200], 1, 0) #tifa: posicion y color definido (?)
@@ -22,17 +23,21 @@ def main(NOS):
                 id = n_manipulator.get_node_id(x,y)
                 if id == -1: #ningun nodo seleccionado
                     id = sm.BestState()
-                    x, y = n_manipulator.nodes[id].pos
+                    pos_x, pos_y = n_manipulator.nodes[id].pos
                     
                 
                 print("id= ", id)
                 
-                id_first_child = n_manipulator.generate_son(x, y)
+                id_first_child = n_manipulator.generate_son(id)
                 for i in range(1,NOS):
-                    n_manipulator.generate_son(x, y)
+                    n_manipulator.generate_son(id)
                 
                 print("id_child= ", id_first_child)
                 sm.Simulation(id, id_first_child, NOS)
+                for node in n_manipulator.nodes:
+                    #node.update()
+                    newColor = pr.StateColor(node.id) # tifa: Funcion que asigna un color
+                    node.color_to(newColor)
                 
                 #n_manipulator.nodes[id_child].color_to(pr.StateColor(id_child))
 
@@ -41,13 +46,25 @@ def main(NOS):
 
         pressed = pygame.key.get_pressed()
         if pressed[pygame.K_w]:
-            n_manipulator.camera.drag(0,2)
+            n_manipulator.camera.drag(0, 9)
         if pressed[pygame.K_s]:
-            n_manipulator.camera.drag(0,-2)
+            n_manipulator.camera.drag(0, -9)
         if pressed[pygame.K_d]:
-            n_manipulator.camera.drag(-2,0)
+            n_manipulator.camera.drag(-9, 0)
         if pressed[pygame.K_a]:
-            n_manipulator.camera.drag(2,0)
+            n_manipulator.camera.drag(9, 0)
+        if pressed[pygame.K_z]:
+            n_manipulator.camera.anchura -= 1
+            n_manipulator.update_position()
+        if pressed[pygame.K_x]:
+            n_manipulator.camera.anchura += 1
+            n_manipulator.update_position()
+        if pressed[pygame.K_f]:
+            n_manipulator.camera.altura -= 1
+            n_manipulator.update_position()
+        if pressed[pygame.K_r]:
+            n_manipulator.camera.altura += 1
+            n_manipulator.update_position()
 
         n_manipulator.update()
 

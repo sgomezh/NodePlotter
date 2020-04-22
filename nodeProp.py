@@ -117,9 +117,10 @@ class Node:
         pos_x = int(self.pos[0] + camera.desp[0])
         pos_y = int(self.pos[1] + camera.desp[1])
         position = (pos_x, pos_y)
-        pygame.draw.circle(surface, self.color, position, self.radius)
+        radio = max(int(self.radius*float(min(camera.anchura, camera.altura))/35.0),1)
+        pygame.draw.circle(surface, self.color, position, radio)
         if self.selected:
-            pygame.draw.circle(surface, (255, 255, 255), position, self.radius)  
+            pygame.draw.circle(surface, (255, 255, 255), position, radio)  # , width=2)
 
     def generate_son(self, pos: List[float, float],
                      color: List[int, int, int],

@@ -43,8 +43,6 @@ class NodeManipulator:
         """
         for node in self.nodes:
             node.update()
-            newColor = pr.StateColor(node.id) # tifa: Funcion que asigna un color
-            node.color_to(newColor)
 
         self.camera.update()
 
@@ -69,8 +67,8 @@ class NodeManipulator:
             #tifa: solo queda poner las variables en el texto. Imprime hacia el lado, no hacia abajo como deberia ser.
             self.label = []
             #self.label.append(self.font.render("Nodo " + str(self.node_selected.id), True, (255, 200, 200), (40, 40, 40)))
-            self.label.append(self.font.render("Ev: " + str(round(float(firstEv)*100)/100), True, (255, 200, 200), (40, 40, 40)))
-            self.label.append(self.font.render("Mean: " + str(round(float(meanEv)*100)/100), True, (255, 200, 200), (40, 40, 40)))
+            self.label.append(self.font.render("Ev: " + str(round(float(firstEv)*10000)/100), True, (255, 200, 200), (40, 40, 40)))
+            self.label.append(self.font.render("Mean: " + str(round(float(meanEv)*10000)/100), True, (255, 200, 200), (40, 40, 40)))
             self.label.append(self.font.render("sd: " + str(round(float(stdDev)*100)/100), True, (255, 200, 200), (40, 40, 40)))
 
             
@@ -105,54 +103,55 @@ class NodeManipulator:
                 return node.id
         return -1 #ningun nodo fue seleccionado
 
-    def generate_son(self, clic_x: int, clic_y: int) -> None:
+    def generate_son(self, id) -> None:
         """
         Genera un nodo hijo conectado con el nodo al que se hace clic
         :param clic_x:  Posicion del clic en el eje X
         :param clic_y:  Posicion del clic en el eje Y
         """
-        id_nodo = -1
-        for node in self.nodes:
+        node = self.nodes[id]
+        #for node in self.nodes:
            
             #print("Nodo: " + str(node.id) + ", Color: " + str(node.color))
-            if node.in_body(clic_x, clic_y, self.camera):
-                node.radius = 10 + int(len(node.conected_nodes)/3)
-                # Generando nuevo nodo
-                color = pr.StateColor(node.id) # tifa: Funcion que asigna un color
-                #print("el color es: ", color)
-                #color = [200, 200, 200]
-                angle_objetive = random.random() * 2 * math.pi
+            #if node.in_body(clic_x, clic_y, self.camera):
+        node.radius = 10 #+ int(len(node.conected_nodes)/3)
+        # Generando nuevo nodo
+        color = pr.StateColor(node.id) # tifa: Funcion que asigna un color
+        #print("el color es: ", color)
+        #color = [200, 200, 200]
+        angle_objetive = random.random() * 2 * math.pi
 
-                pos_objetive = (math.sin(angle_objetive) * node.radius * 5 +
-                                node.pos[0], math.cos(angle_objetive) *
-                                node.radius * 5 + node.pos[1])
-                id_nodo = len(self.nodes)
-                new_node = node.generate_son([node.pos[0], node.pos[1]], color,
-                                             pos_objetive, id_nodo)
+        pos_objetive = (math.sin(angle_objetive) * node.radius * 5 +
+                        node.pos[0], math.cos(angle_objetive) *
+                        node.radius * 5 + node.pos[1])
+        id_nodo = len(self.nodes)
+        new_node = node.generate_son([node.pos[0], node.pos[1]], color,
+                                     pos_objetive, id_nodo)
 
-                # Agregando el nuevo nodo a la lista de nodos ordenado por
-                # profundidad
-                if len(self.nodes_bd) < new_node.depth:
-                    # Agrandando lista de litas de nodos (profundidad)
-                    self.nodes_bd.append([])
-                i_father = self.nodes_bd[node.depth - 1].index(node)
+        # Agregando el nuevo nodo a la lista de nodos ordenado por
+        # profundidad
+        if len(self.nodes_bd) < new_node.depth:
+            # Agrandando lista de litas de nodos (profundidad)
+            self.nodes_bd.append([])
+        i_father = self.nodes_bd[node.depth - 1].index(node)
 
-                encontrado = False
-                for n in self.nodes_bd[new_node.depth - 1]:
-                    i_nfather = self.nodes_bd[n.father.depth - 1].index(
-                        n.father)
-                    if i_nfather > i_father:
-                        index_n = self.nodes_bd[n.depth - 1].index(n)
-                        self.nodes_bd[new_node.depth - 1].insert(index_n,
+        encontrado = False
+        for n in self.nodes_bd[new_node.depth - 1]:
+            i_nfather = self.nodes_bd[n.father.depth - 1].index(
+                n.father)
+            if i_nfather > i_father:
+                index_n = self.nodes_bd[n.depth - 1].index(n)
+                self.nodes_bd[new_node.depth - 1].insert(index_n,
                                                                  new_node)
-                        encontrado = True
-                        break
-                if not encontrado:
-                    self.nodes_bd[new_node.depth - 1].append(new_node)
-
-                # Agregando el nuevo nodo a la lista de nodos
-                self.nodes.append(new_node)
+                encontrado = True
                 break
+        if not encontrado:
+            self.nodes_bd[new_node.depth - 1].append(new_node)
+
+        # Agregando el nuevo nodo a la lista de nodos
+        self.nodes.append(new_node)
+        #break
+                
         self.update_position()
         if id_nodo == -1:
             print("No se apreto nada ")
@@ -163,9 +162,9 @@ class NodeManipulator:
         Actualiza la posicion de todos los nodos, generando una estructura de
         arbol con estos.
         """
-        SIZE = 35
-        SIZEY = 40
-        offsety = 50
+        SIZE = self.camera.anchura
+        SIZEY = self.camera.altura
+        offsety = SIZEY
         for depth in self.nodes_bd:
             n_hojas_vecinos = 0
             for node in depth:

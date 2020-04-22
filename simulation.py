@@ -55,7 +55,7 @@ def Simulation(ParentKey, ChildKey, NOS):
         if ParentKey ==0:
             Evaluation = random.uniform(28, 30)
         else:
-            Evaluation = StateMap[ParentKey].FirstEv + random.uniform(-0.5, 0.5) 
+            Evaluation = StateMap[ParentKey].FirstEv + random.uniform(-5, 0.1) 
               
         # Llama al metodo que inicializa el nodo 
         StateMap[ParentKey].AddSimulation(Evaluation, Actions) 

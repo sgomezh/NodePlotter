@@ -7,16 +7,21 @@ class Camera:
 
     desp_obj: List[float, float]
 
+    anchura: int    # Pixeles que tienen de separacion los nodos
+    altura: int
+
     def __init__(self):
         self.desp = [0, 0]
         self.desp_obj = [0, 0]
+        self.anchura = 35
+        self.altura = 35
 
     def update(self) -> None:
         """
         Actualiza el estado de la camara
         """
-        self.desp[0] += (self.desp_obj[0] - self.desp[0]) * 0.01
-        self.desp[1] += (self.desp_obj[1] - self.desp[1]) * 0.01
+        self.desp[0] += (self.desp_obj[0] - self.desp[0]) * 0.1
+        self.desp[1] += (self.desp_obj[1] - self.desp[1]) * 0.1
 
     def drag(self, x: float, y: float) -> None:
         """
