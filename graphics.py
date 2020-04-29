@@ -6,15 +6,29 @@ import properties as pr
 from camera import Camera
 import reader as rd
 
+def click_node(NOS,id,n_manipulator):
+    id_first_child = n_manipulator.generate_son(id)
+    for i in range(1,NOS):
+        n_manipulator.generate_son(id)
+           
+        #print("id_child= ", id_first_child)
+        sm.Simulation(id, id_first_child, NOS)
+        for node in n_manipulator.nodes:
+            #node.update()
+            newColor = pr.StateColor(node.id) # tifa: Funcion que asigna un color
+            node.color_to(newColor)
+
 def main(NOS):
     raiz = Node([27, 27], [200, 200, 200], 1, 0) #tifa: posicion y color definido (?)
     #print(raiz)
     n_manipulator = node_manipulator.NodeManipulator(raiz)   
     pygame.init()
-    screen = pygame.display.set_mode((900, 500))
+    screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+    #screen = pygame.display.set_mode((900, 500))
     pygame.display.set_caption("Node Plotter")
     done = False
 
+           
     '''stateList = rd.reader()
     #lenght = len(stateList)
     #for i in range(lenght):
@@ -46,20 +60,7 @@ def main(NOS):
                     id = sm.BestState()
                     pos_x, pos_y = n_manipulator.nodes[id].pos
                     
-                
-                #print("id= ", id)
-                
-                id_first_child = n_manipulator.generate_son(id)
-                for i in range(1,NOS):
-                    n_manipulator.generate_son(id)
-                
-                #print("id_child= ", id_first_child)
-                sm.Simulation(id, id_first_child, NOS)
-                for node in n_manipulator.nodes:
-                    #node.update()
-                    newColor = pr.StateColor(node.id) # tifa: Funcion que asigna un color
-                    node.color_to(newColor)
-                
+                click_node(NOS,id,n_manipulator)
                 #n_manipulator.nodes[id_child].color_to(pr.StateColor(id_child))
 
             '''else:

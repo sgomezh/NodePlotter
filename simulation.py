@@ -16,7 +16,7 @@ StateMap = {}
 StateMap[0] = state.State(None, 0)
 
 def BestState():
-    bestEval = -1.0
+    bestEval = -100000000
     bestState = None
     for (key,state) in StateMap.items():
         ev = state.eval()
@@ -38,6 +38,7 @@ def CreateState(key, parent, actions, eval):
     (StateMap[parent].ChildList).append(key) 
     
     StateMap[parent].AddSimulation(eval, actions) 
+    StateMap[parent].set_selected()
               
     # Se llama a simular el nodo para inicializarlo (Ver clase Nodo)
     StateMap[key].AddSimulation(eval, 0)
@@ -54,9 +55,9 @@ def compute_parameters(parentEv, mu_parent, sigma_parent, V, id_child):
         mu_child = ((V-v)*mu_parent + v*firstEv)/V
     else:
         if (random.uniform(0,100) <= np.power(0.99,(id_child-2)) * 20):
-            mu_child = mu_parent + random.uniform(0,0.01)
+            mu_child = mu_parent + random.uniform(0,0.05)*(V-v)
         else:
-            mu_child = mu_parent - random.uniform(0,0.01)  
+            mu_child = mu_parent - random.uniform(0,0.05)*(V-v)
             
         if sigma_child>0:
             firstEv = truncnorm.rvs((0 - mu_child) / sigma_child, 
@@ -78,7 +79,7 @@ def Simulation(ParentKey, ChildKey, NOS):
         #fake eval
         firstEv, mu_child, sigma_child, v = compute_parameters(parentEv, mu, sigma, V, id_child)  
         
-        CreateState(ChildKey,ParentKey,10000, firstEv)
+        CreateState(ChildKey, ParentKey, 10000, firstEv)
         
         StateMap[ChildKey].mu = mu_child
         StateMap[ChildKey].sigma = sigma_child

@@ -17,6 +17,8 @@ class State:
     id_ = 0
     bestEv = 0.0
     worstEv = 100.0
+    level2selected = {} #Number of nodes selected by level of the tree
+    level2nodes = {} #Number of nodes by lebel
 
     def __init__(self, Parent, id):  # Constructor del nodo
 
@@ -33,6 +35,8 @@ class State:
         self.ChildList = []  # Esto representa una  lista dinamica, para apregar datos se utiliza el metodo append()
         self.Path = [] #Pila de nodos (desde la raiz) para llegar al nodo actual. Utiliza el metodo extend()
         self.NumSimulations = 0 # Numero de veces que el nodo ha sido simulado
+        self.Selected = False # Mark if the node has been selected
+        
         self.IdLastChild = None
         self.Parent = None
         self.StateEv = 0
@@ -41,16 +45,54 @@ class State:
             self.IdLastChild = len(self.Parent.ChildList)+1
             
         if id==0:
+            self.Level = 0 # nivel del nodo
             self.mu = 0.9
             self.sigma = 0.02
             self.V = 1
             self.fakeEv = truncnorm.rvs(
                 (- self.mu) / self.sigma, (1 - self.mu) / self.sigma, loc=self.mu, scale=self.sigma, size=1)[0] 
-
-# ------------------------ Evaluación de un estado ---------------------- #
-    def eval(self):
-        return self.FirstEv
+        else:
+            self.Level = self.Parent.Level + 1  # nivel del nodo
+            if self.Level in State.level2nodes:
+                State.level2nodes[self.Level] += 1
+            else:
+                State.level2nodes[self.Level] = 1
             
+# ------------------------ Evaluación de un estado ---------------------- #
+    def eval0(self):
+        return self.FirstEv
+    
+    #BeamSearch like evaluation
+    def eval(self):
+        if self.V==0.0:
+            return -np.inf
+        
+        N1=0; SN=0; N=1
+        if self.Level in State.level2nodes:
+            N = State.level2nodes[self.Level] #nodos en nivel actual
+        if self.Level+1 in State.level2nodes:
+            N1 = State.level2nodes[self.Level+1] #nodos del siguiente nivel
+        if self.Level in State.level2selected:
+            SN = State.level2selected[self.Level]
+            
+        depth = self.Level
+        children = len(self.ChildList)
+        a=100000; b=10000; c=1000; d=100; e=1
+        S=0
+        if self.Selected: S=1
+        if self.id==0: #root node
+            return -a*N1/2 - b*depth
+        else:
+            return -a*N1 - b*depth -c*np.max(np.sqrt(N)-SN,0)*S - d*children + e*self.FirstEv
+    
+# ------------------------- Mark selected ---------------------------- #
+    def set_selected(self):
+        if self.Selected == False:
+            if self.Level in State.level2selected:
+                State.level2selected[self.Level] += 1
+            else:
+                State.level2selected[self.Level] = 1
+            self.Selected = True
 # ------------------------ PROMEDIO DE LAS EVALUACIONES -------------------------
 
     # Calcula el promedio cada vez que se hace una simulacion con el nuevo dato (nueva evaluacion)
@@ -79,8 +121,10 @@ class State:
         SquareMean = self.SquareMeanEv
         Mean = self.MeanEv
         Diff = np.max(SquareMean - (Mean**2),0)
-        StdDev = mt.sqrt(Diff)
-        return StdDev
+        #Verificar
+        #StdDev = mt.sqrt(Diff)
+        #return StdDev
+        return 0.0
 
 # ------------------------  DE LAS EVALUACIONES -------------------------
 
