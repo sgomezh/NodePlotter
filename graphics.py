@@ -4,15 +4,36 @@ import node_manipulator
 import simulation as sm
 import properties as pr
 from camera import Camera
+import reader as rd
 
 def main(NOS):
     raiz = Node([27, 27], [200, 200, 200], 1, 0) #tifa: posicion y color definido (?)
-    print(raiz)
+    #print(raiz)
     n_manipulator = node_manipulator.NodeManipulator(raiz)   
     pygame.init()
     screen = pygame.display.set_mode((900, 500))
-    pygame.display.set_caption("PyGraphicGraf")
+    pygame.display.set_caption("Node Plotter")
     done = False
+
+    '''stateList = rd.reader()
+    #lenght = len(stateList)
+    #for i in range(lenght):
+
+     #   dataList = stateList[i]
+
+   #     childKey = int(dataList[0])
+    #    parentKey = int(dataList[1])
+     #   Evaluation = float(dataList[2])
+     
+      #  n_manipulator.generate_son(parentKey)
+       # sm.CreateState(childKey, parentKey, 0, Evaluation)
+
+        n_manipulator.update()
+
+        screen.fill((33, 33, 33))
+        n_manipulator.draw(screen)
+        pygame.display.update()'''
+
 
     while not done:
         for event in pygame.event.get():
@@ -21,18 +42,18 @@ def main(NOS):
             if event.type == pygame.MOUSEBUTTONDOWN:
                 x, y = event.pos
                 id = n_manipulator.get_node_id(x,y)
-                if id == -1: #ningun nodo seleccionado
+                if id == -1: #ningun nodo seleccionado (seleccion automatica)
                     id = sm.BestState()
                     pos_x, pos_y = n_manipulator.nodes[id].pos
                     
                 
-                print("id= ", id)
+                #print("id= ", id)
                 
                 id_first_child = n_manipulator.generate_son(id)
                 for i in range(1,NOS):
                     n_manipulator.generate_son(id)
                 
-                print("id_child= ", id_first_child)
+                #print("id_child= ", id_first_child)
                 sm.Simulation(id, id_first_child, NOS)
                 for node in n_manipulator.nodes:
                     #node.update()
@@ -71,6 +92,7 @@ def main(NOS):
         screen.fill((33, 33, 33))
         n_manipulator.draw(screen)
         pygame.display.update()
+        
 
 
 '''if __name__ == '__main__':

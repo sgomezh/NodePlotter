@@ -7,8 +7,6 @@ import numpy as np
 import subprocess
 import state
 import properties as pr
-import function1 as f1
-import function2 as f2
 import paramiko
 import random
 from scipy.stats import truncnorm
@@ -55,7 +53,7 @@ def compute_parameters(parentEv, mu_parent, sigma_parent, V, id_child):
         firstEv = parentEv
         mu_child = ((V-v)*mu_parent + v*firstEv)/V
     else:
-        if (random.uniform(0,100) <= np.power(0.95,(id_child-2)) * 10):
+        if (random.uniform(0,100) <= np.power(0.99,(id_child-2)) * 10):
             mu_child = mu_parent + random.uniform(0,0.01)
         else:
             mu_child = mu_parent - random.uniform(0,0.01)  
@@ -69,6 +67,7 @@ def compute_parameters(parentEv, mu_parent, sigma_parent, V, id_child):
 
 # --- Fake simulations ------- #
 def Simulation(ParentKey, ChildKey, NOS):
+
     id_child = len(StateMap[ParentKey].ChildList)+1
     parentEv = StateMap[ParentKey].fakeEv
     V = StateMap[ParentKey].V

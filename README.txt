@@ -14,7 +14,7 @@ Usé Visual Studio para hacer este código. Para correr el código, ejecute el a
 6) Node_manipulator.py: dibuja los nodos y les asigna propiedades como el color y el tamaño. En este archivo se imprime información 
 al pasar por encima de los nodos y configurar el tamaño y color según las funciones del archivo properties.py
 
-7) Node.py: Almacena los datos principales del nodo
+7) Node.py: Almacena los datos principales del nodo (Ahora: state.py (?))
 
 8) NodeProp.py: Contiene atributos de la figura o dibujo del arbol 
 

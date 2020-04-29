@@ -7,8 +7,6 @@ import plotly.graph_objs as go
 import networkx.drawing as nxdraw
 import simulation as sm
 import properties as pr
-import function1 as f1
-import function2 as f2
 import random
 from scipy.stats import truncnorm
 # ------------------------ DEFINICION DE CLASE NODO Y SUS METODOS -------------------------
@@ -51,8 +49,8 @@ class State:
 
 # ------------------------ Evaluación de un estado ---------------------- #
     def eval(self):
-        return self.FirstEv 
-
+        return self.FirstEv
+            
 # ------------------------ PROMEDIO DE LAS EVALUACIONES -------------------------
 
     # Calcula el promedio cada vez que se hace una simulacion con el nuevo dato (nueva evaluacion)
