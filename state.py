@@ -7,8 +7,6 @@ import plotly.graph_objs as go
 import networkx.drawing as nxdraw
 import simulation as sm
 import properties as pr
-import function1 as f1
-import function2 as f2
 import random
 # ------------------------ DEFINICION DE CLASE NODO Y SUS METODOS -------------------------
 # Esta clase define la informacion que se guarda en el nodo (cada nodo se guarda en el mapa StateMap)
@@ -43,7 +41,7 @@ class State:
 
 # ------------------------ Evaluación de un estado ---------------------- #
     def eval(self):
-        return self.FirstEv + random.uniform(-0.5, 0.5) 
+        return self.FirstEv
             
 # ------------------------ PROMEDIO DE LAS EVALUACIONES -------------------------
 

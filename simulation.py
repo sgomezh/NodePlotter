@@ -7,8 +7,6 @@ import numpy as np
 import subprocess
 import state
 import properties as pr
-import function1 as f1
-import function2 as f2
 import paramiko
 import random
 # ---------------------------------------------------- GENERADOR DE CLAVES ----------------------------------------------------------
@@ -46,7 +44,7 @@ def CreateState(key, parent, actions, eval):
      
 
 # --- Fake simulations ------- #
-def FakeSimulation(ParentKey, ChildKey, NOS):
+def Simulation(ParentKey, ChildKey, NOS):
     for i in range(0,NOS):
         #fake eval
         if ParentKey ==0:
@@ -61,7 +59,7 @@ def FakeSimulation(ParentKey, ChildKey, NOS):
 # --------------------------------------------------------- SIMULACION DE UN NODO ----------------------------------------------------
 StateSimulations = 0
 # Se recibe una evaluacion y un numero de acciones a partir del simulador. A partir de ello, se rellena el nodo del mapa y se agregan hijos a un nodo del grafo
-def Simulation(ParentKey, ChildKey, NOS):
+def RealSimulation(ParentKey, ChildKey, NOS):
 
     global StateSimulations
     
