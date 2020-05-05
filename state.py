@@ -104,6 +104,8 @@ class State:
         return mt.log((self.BestEv - self.WorstEv) / (self.StdDev+1))
        
     def eval(self):
+        if self.V==0.0:
+            return -np.inf
         return (len(sm.StateMap) - self.NumSimulations) * self.MeanEv
 
 
