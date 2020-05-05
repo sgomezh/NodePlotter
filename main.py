@@ -6,7 +6,7 @@ import graphics as gp
 # ------------------------ LLAMADO DE FUNCIONES -------------------------
 
 # Esta variable almacena el numero de simulaciones que se haran por cada nodo
-NOS = 2
+NOS = 1
 
 # Se llama a la funcion que dibuja el grafo
 

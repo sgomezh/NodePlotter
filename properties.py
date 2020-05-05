@@ -64,7 +64,7 @@ def StateColor(key):
     #state.State.worstEv= 0.90
     # En caso de que sea la mejor evaluacion, se le asigna el color amarillo 
     if state.State.bestEv == sm.StateMap[key].FirstEv:
-        color_array = [255,255,255]
+        color_array = [0,200,0]
     
    
     # Sino, se calcula el color de forma gradual segun su porcentaje en funcion de su mejor y peor evaluacion    

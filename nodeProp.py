@@ -54,7 +54,7 @@ class Node:
         self.color_objetive = (color[0], color[1], color[2])
         self.conected_nodes = []
         self.id = id_node
-        #print("id_node: ", id_node)
+        print("id_node: ", id_node)
         self.radius = 10
         self.selected = False
         self.data = []

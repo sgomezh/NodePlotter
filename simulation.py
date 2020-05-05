@@ -9,14 +9,13 @@ import state
 import properties as pr
 import paramiko
 import random
-from scipy.stats import truncnorm
 # ---------------------------------------------------- GENERADOR DE CLAVES ----------------------------------------------------------
 # Se inicializa el mapa y se crea la primera casilla (nodo raiz)
 StateMap = {}
 StateMap[0] = state.State(None, 0)
 
 def BestState():
-    bestEval = -100000000
+    bestEval = -1.0
     bestState = None
     for (key,state) in StateMap.items():
         ev = state.eval()
@@ -38,54 +37,22 @@ def CreateState(key, parent, actions, eval):
     (StateMap[parent].ChildList).append(key) 
     
     StateMap[parent].AddSimulation(eval, actions) 
-    StateMap[parent].set_selected()
               
     # Se llama a simular el nodo para inicializarlo (Ver clase Nodo)
     StateMap[key].AddSimulation(eval, 0)
 
-def compute_parameters(parentEv, mu_parent, sigma_parent, V, id_child):
-    if V<0.05: 
-        v = V
-    else:
-        v =  random.uniform (0.05,0.1)
-
-    sigma_child = ((V-v)/V) * sigma_parent
-    if id_child==1:
-        firstEv = parentEv
-        mu_child = ((V-v)*mu_parent + v*firstEv)/V
-    else:
-        if (random.uniform(0,100) <= np.power(0.99,(id_child-2)) * 20):
-            mu_child = mu_parent + random.uniform(0,0.05)*(V-v)
-        else:
-            mu_child = mu_parent - random.uniform(0,0.05)*(V-v)
-            
-        if sigma_child>0:
-            firstEv = truncnorm.rvs((0 - mu_child) / sigma_child, 
-               (1 - mu_child) / sigma_child, loc=mu_child, scale=sigma_child, size=1)[0]
-        else:
-            firstEv = mu_child
-    return firstEv, mu_child, sigma_child, v
+     
 
 # --- Fake simulations ------- #
 def Simulation(ParentKey, ChildKey, NOS):
-
-    id_child = len(StateMap[ParentKey].ChildList)+1
-    parentEv = StateMap[ParentKey].fakeEv
-    V = StateMap[ParentKey].V
-    sigma = StateMap[ParentKey].sigma
-    mu = StateMap[ParentKey].mu
-    
     for i in range(0,NOS):
         #fake eval
-        firstEv, mu_child, sigma_child, v = compute_parameters(parentEv, mu, sigma, V, id_child)  
+        if ParentKey ==0:
+            Evaluation = random.uniform(28, 30)
+        else:
+            Evaluation = StateMap[ParentKey].FirstEv + random.uniform(-5, 0.1)         
         
-        CreateState(ChildKey, ParentKey, 10000, firstEv)
-        
-        StateMap[ChildKey].mu = mu_child
-        StateMap[ChildKey].sigma = sigma_child
-        StateMap[ChildKey].V = V-v
-        StateMap[ChildKey].fakeEv = firstEv
-        id_child = id_child+1
+        CreateState(ChildKey,ParentKey,10000, Evaluation)
 
         ChildKey=ChildKey+1
 
