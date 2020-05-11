@@ -11,11 +11,14 @@ import paramiko
 import random
 from scipy.stats import truncnorm
 # ---------------------------------------------------- GENERADOR DE CLAVES ----------------------------------------------------------
+max_child = 3
+
 # Se inicializa el mapa y se crea la primera casilla (nodo raiz)
 StateMap = {}
 StateMap[0] = state.State(None, 0)
 
 def BestState():
+    if len(StateMap)==1: return 0
     bestEval = -100000000
     bestState = None
     for (key,state) in StateMap.items():
@@ -37,11 +40,11 @@ def CreateState(key, parent, actions, eval):
     # Como ya esta creado el nuevo nodo, se mete a la lista de "hijos visibles" del nodo
     (StateMap[parent].ChildList).append(key) 
     
-    StateMap[parent].AddSimulation(eval, actions) 
+    StateMap[parent].AddSimulation(eval, -1) 
     StateMap[parent].set_selected()
               
     # Se llama a simular el nodo para inicializarlo (Ver clase Nodo)
-    StateMap[key].AddSimulation(eval, 0)
+    StateMap[key].AddSimulation(eval, actions)
 
 def compute_parameters(parentEv, mu_parent, sigma_parent, V, id_child):
     if V<0.05: 
@@ -79,7 +82,7 @@ def Simulation(ParentKey, ChildKey, NOS):
         #fake eval
         firstEv, mu_child, sigma_child, v = compute_parameters(parentEv, mu, sigma, V, id_child)  
         
-        CreateState(ChildKey, ParentKey, 10000, firstEv)
+        CreateState(ChildKey, ParentKey, max_child, firstEv)
         
         StateMap[ChildKey].mu = mu_child
         StateMap[ChildKey].sigma = sigma_child

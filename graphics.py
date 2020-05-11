@@ -23,8 +23,9 @@ def main(NOS):
     #print(raiz)
     n_manipulator = node_manipulator.NodeManipulator(raiz)   
     pygame.init()
+    #screen = pygame.Surface((900, 500), pygame.SRCALPHA, 32)
     screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
-    #screen = pygame.display.set_mode((900, 500))
+    #screen = pygame.display.set_mode((900, 500), pygame.SRCALPHA, 32)
     pygame.display.set_caption("Node Plotter")
     done = False
 
@@ -58,6 +59,7 @@ def main(NOS):
                 id = n_manipulator.get_node_id(x,y)
                 if id == -1: #ningun nodo seleccionado (seleccion automatica)
                     id = sm.BestState()
+                    if id == None: continue # do nothing
                     pos_x, pos_y = n_manipulator.nodes[id].pos
                     
                 click_node(NOS,id,n_manipulator)
