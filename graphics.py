@@ -83,10 +83,10 @@ def main(NOS):
         if pressed[pygame.K_x]:
             n_manipulator.camera.anchura += 1
             n_manipulator.update_position()
-        if pressed[pygame.K_f]:
+        if pressed[pygame.K_r]:
             n_manipulator.camera.altura -= 1
             n_manipulator.update_position()
-        if pressed[pygame.K_r]:
+        if pressed[pygame.K_f]:
             n_manipulator.camera.altura += 1
             n_manipulator.update_position()
 

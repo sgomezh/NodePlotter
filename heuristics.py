@@ -11,7 +11,7 @@ def eval(self):
         return -np.inf
     
     #Change by your prefered heuristic
-    return BeamSearch (self, 3)
+    return BeamSearch (self, 5)
     #return BFS(self)
 
 
@@ -81,6 +81,7 @@ def BeamSearch (self, W):
         if children >= W: return -np.inf
         if not self.Selected and SN>=W: return -np.inf
         return -b*depth + e*self.FirstEv  
+
 
 #BeamSearch like evaluation
 def eval6(self):

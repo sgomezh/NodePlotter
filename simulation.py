@@ -11,7 +11,14 @@ import paramiko
 import random
 from scipy.stats import truncnorm
 # ---------------------------------------------------- GENERADOR DE CLAVES ----------------------------------------------------------
-max_child = 3
+
+#Parameters of the Fake Simulator
+max_child = 100  # max number of children per node
+init_sigma = 0.008 # std deviation in the root node
+init_penalty = 0.005 # penalización de mu por no ser el primer hijo
+extrachild_penalty = 0.04/100 # penalización adicional por hijo extra
+
+
 
 # Se inicializa el mapa y se crea la primera casilla (nodo raiz)
 StateMap = {}
@@ -46,25 +53,25 @@ def CreateState(key, parent, actions, eval):
     # Se llama a simular el nodo para inicializarlo (Ver clase Nodo)
     StateMap[key].AddSimulation(eval, actions)
 
+def truncate_normal(min,max,mu,sigma):
+     return truncnorm.rvs((min - mu) / sigma, 
+               (max - mu) / sigma, loc=mu, scale=sigma, size=1)[0]
+    
 def compute_parameters(parentEv, mu_parent, sigma_parent, V, id_child):
     if V<0.05: 
         v = V
     else:
-        v =  random.uniform (0.05,0.1)
+        v =  random.uniform (0.0,0.05)
 
-    sigma_child = ((V-v)/V) * sigma_parent
+    sigma_child = (V-v)*init_sigma
     if id_child==1:
         firstEv = parentEv
         mu_child = ((V-v)*mu_parent + v*firstEv)/V
     else:
-        if (random.uniform(0,100) <= np.power(0.99,(id_child-2)) * 20):
-            mu_child = mu_parent + random.uniform(0,0.05)*(V-v)
-        else:
-            mu_child = mu_parent - random.uniform(0,0.05)*(V-v)
+        mu_child = truncate_normal(0,1,mu_parent - init_penalty - (id_child-2)*extrachild_penalty, sigma_child)
             
         if sigma_child>0:
-            firstEv = truncnorm.rvs((0 - mu_child) / sigma_child, 
-               (1 - mu_child) / sigma_child, loc=mu_child, scale=sigma_child, size=1)[0]
+            firstEv = truncate_normal(0,1,mu_child,sigma_child)
         else:
             firstEv = mu_child
     return firstEv, mu_child, sigma_child, v
@@ -88,6 +95,13 @@ def Simulation(ParentKey, ChildKey, NOS):
         StateMap[ChildKey].sigma = sigma_child
         StateMap[ChildKey].V = V-v
         StateMap[ChildKey].fakeEv = firstEv
+        
+        V2 = StateMap[ChildKey].V
+        if V2 > 0:
+            StateMap[ChildKey].NumActions = int(np.sqrt(1-(1-V2)*(1-V2))*max_child)
+        else:
+            StateMap[ChildKey].NumActions = 0
+        #int(random.uniform(StateMap[ChildKey].V,1)*max_child)
         id_child = id_child+1
 
         ChildKey=ChildKey+1
