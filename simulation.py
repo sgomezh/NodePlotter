@@ -14,9 +14,8 @@ from scipy.stats import truncnorm
 
 #Parameters of the Fake Simulator
 max_child = 100  # max number of children per node
-init_sigma = 0.008 # std deviation in the root node
-init_penalty = 0.005 # penalización de mu por no ser el primer hijo
-extrachild_penalty = 0.04/100 # penalización adicional por hijo extra
+init_sigma = 0.01 # std deviation in the root node
+extrachild_penalty = 0.005 # penalización adicional por hijo extra
 
 
 
@@ -68,7 +67,7 @@ def compute_parameters(parentEv, mu_parent, sigma_parent, V, id_child):
         firstEv = parentEv
         mu_child = ((V-v)*mu_parent + v*firstEv)/V
     else:
-        mu_child = truncate_normal(0,1,mu_parent - init_penalty - (id_child-2)*extrachild_penalty, sigma_child)
+        mu_child = truncate_normal(0,1,mu_parent - (id_child-1)*extrachild_penalty, sigma_child)
             
         if sigma_child>0:
             firstEv = truncate_normal(0,1,mu_child,sigma_child)
