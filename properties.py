@@ -42,7 +42,7 @@ def WorstMapEv():
  
 #----------------------------------COLOR DEL NODO-----------------------------------------
     
-def StateColor(key):
+def StateColor(key, nb_nodes):
 
     # Se crea la lista que almacera todos los colores que deban tomar los nodos
     color_array = []
@@ -83,8 +83,15 @@ def StateColor(key):
         #print("R= ", R)
         #print("G= ", G)
         #print("B= ", B)
+        shade_factor = (key+100)/(nb_nodes+100)
+        R = round(shade_factor*R)
+        G = round(shade_factor*G)
+        B = round(shade_factor*B)
+        
         
         color_array = [R,G,B]
+        
+        
      
     # Se retorna un arreglo que contiene todos los colores de los nodos      
     return color_array

@@ -11,7 +11,7 @@ def eval(self):
         return -np.inf
     
     #Change by your prefered heuristic
-    return BeamSearch (self, 5)
+    return BeamSearch (self, 3)
     #return BFS(self)
 
 

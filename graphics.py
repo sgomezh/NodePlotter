@@ -15,10 +15,10 @@ def click_node(NOS,id,n_manipulator):
         sm.Simulation(id, id_first_child, NOS)
         for node in n_manipulator.nodes:
             #node.update()
-            newColor = pr.StateColor(node.id) # tifa: Funcion que asigna un color
+            newColor = pr.StateColor(node.id, len(n_manipulator.nodes)) # tifa: Funcion que asigna un color
             node.color_to(newColor)
 
-def main(NOS):
+def main(NOS, file):
     raiz = Node([27, 27], [200, 200, 200], 1, 0) #tifa: posicion y color definido (?)
     #print(raiz)
     n_manipulator = node_manipulator.NodeManipulator(raiz)   
@@ -29,25 +29,31 @@ def main(NOS):
     pygame.display.set_caption("Node Plotter")
     done = False
 
-           
-    '''stateList = rd.reader()
-    #lenght = len(stateList)
-    #for i in range(lenght):
+    if file:
+        stateList = rd.reader(file)
+        lenght = len(stateList)
+        for i in range(lenght):
 
-     #   dataList = stateList[i]
-
-   #     childKey = int(dataList[0])
-    #    parentKey = int(dataList[1])
-     #   Evaluation = float(dataList[2])
+            dataList = stateList[i]
+            
+            childKey = int(dataList[0])
+            parentKey = int(dataList[1])
+            Evaluation = float(dataList[2])
+            Actions = int(dataList[3])
      
-      #  n_manipulator.generate_son(parentKey)
-       # sm.CreateState(childKey, parentKey, 0, Evaluation)
+            n_manipulator.generate_son(parentKey)
+            sm.CreateState(childKey, parentKey, Actions, Evaluation)
 
+            for node in n_manipulator.nodes:
+                #node.update()
+                newColor = pr.StateColor(node.id, len(n_manipulator.nodes)) # tifa: Funcion que asigna un color
+                node.color_to(newColor)
+            
         n_manipulator.update()
 
         screen.fill((33, 33, 33))
         n_manipulator.draw(screen)
-        pygame.display.update()'''
+        pygame.display.update()
 
 
     while not done:

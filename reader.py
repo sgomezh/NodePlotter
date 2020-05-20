@@ -2,9 +2,9 @@ import node_manipulator as n_manipulator
 import simulation as sm
 import graphics as gp
 
-def reader ():
+def reader (file):
     # abre un archivo de prueba txt
-    archive = open('tree-example.txt', 'r')
+    archive = open(file, 'r')
     # define el token para seprar los datos
     token = ","
     # se crea una lista que almacena muchos estados 
