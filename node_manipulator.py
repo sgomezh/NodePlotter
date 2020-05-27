@@ -64,13 +64,13 @@ class NodeManipulator:
             bestEv = str(sm.StateMap[self.node_selected.id].BestEv)
             stdDev = str(sm.StateMap[self.node_selected.id].StdDev)
             Actions = str(sm.StateMap[self.node_selected.id].NumActions)
-            fakeMean = str(sm.StateMap[self.node_selected.id].mu)
+            #fakeMean = str(sm.StateMap[self.node_selected.id].mu)
             #tifa: solo queda poner las variables en el texto. Imprime hacia el lado, no hacia abajo como deberia ser.
             self.label = []
             #self.label.append(self.font.render("Nodo " + str(self.node_selected.id), True, (255, 200, 200), (40, 40, 40)))
             self.label.append(self.font.render("Ev: " + str(round(float(firstEv)*10000)/100), True, (255, 200, 200), (40, 40, 40)))
             self.label.append(self.font.render("Mean: " + str(round(float(meanEv)*10000)/100), True, (255, 200, 200), (40, 40, 40)))
-            self.label.append(self.font.render("FakeMean: " + str(round(float(fakeMean)*10000)/100), True, (255, 200, 200), (40, 40, 40)))
+            #self.label.append(self.font.render("FakeMean: " + str(round(float(fakeMean)*10000)/100), True, (255, 200, 200), (40, 40, 40)))
             self.label.append(self.font.render("act: " + str(Actions), True, (255, 200, 200), (40, 40, 40)))
             
             
@@ -120,7 +120,7 @@ class NodeManipulator:
             #if node.in_body(clic_x, clic_y, self.camera):
         node.radius = 10 #+ int(len(node.conected_nodes)/3)
         # Generando nuevo nodo
-        color = pr.StateColor(node.id) # tifa: Funcion que asigna un color
+        color = pr.StateColor(node.id,len(self.nodes)) # tifa: Funcion que asigna un color
         #print("el color es: ", color)
         #color = [200, 200, 200]
         angle_objetive = random.random() * 2 * math.pi
