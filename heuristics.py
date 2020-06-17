@@ -2,16 +2,21 @@
 import state
 import simulation as sm
 import numpy as np
+import random
+import math as mt
+
+def define_seed(seed):
+    random.seed(seed)
 
 def eval(self):
     if self.V<=0.0:  #nodo sin hijos
         return -np.inf
     
     if len(self.ChildList) >= self.NumActions:  #No tiene más acciones
-        return -np.inf
+        return -np.inf 
     
     #Change by your prefered heuristic
-    return BeamSearch (self, 3)
+    return BeamSearch_CurrentEv(self, 3)
     #return BFS(self)
 
 
@@ -78,10 +83,28 @@ def BeamSearch (self, W):
         if children >= W*W: return -np.inf
         return -b*depth
     else:
-        if children >= W: return -np.inf
+        if children >= W: return -np.inf# se descarta
         if not self.Selected and SN>=W: return -np.inf
         return -b*depth + e*self.FirstEv  
 
+def BeamSearch_CurrentEv (self, W):  
+    SN=0
+    if self.Level in state.State.level2selected:
+        SN = state.State.level2selected[self.Level] 
+        
+    depth = self.Level
+    b=10000; e=1
+    children = len(self.ChildList)
+
+    if self.id==0: #root node
+        if children >= W*W: return -np.inf
+        return -b*depth
+    else:
+        if children >= W: return (-b*depth + e*self.FirstEv) - (self.NumSimulations*b)
+
+
+        if not self.Selected and SN>=W: return -np.inf
+        return (-b*depth + e*self.FirstEv) 
 
 #BeamSearch like evaluation
 def eval6(self):
@@ -89,12 +112,12 @@ def eval6(self):
         return -np.inf
     
     N1=0; SN=0; N=1
-    if self.Level in State.level2nodes:
-        N = State.level2nodes[self.Level] #nodos en nivel actual
-    if self.Level+1 in State.level2nodes:
-        N1 = State.level2nodes[self.Level+1] #nodos del siguiente nivel
-    if self.Level in State.level2selected:
-        SN = State.level2selected[self.Level]
+    if self.Level in state.State.level2nodes:
+        N = state.State.level2nodes[self.Level] #nodos en nivel actual
+    if self.Level+1 in state.State.level2nodes:
+        N1 = state.State.level2nodes[self.Level+1] #nodos del siguiente nivel
+    if self.Level in state.State.level2selected:
+        SN = state.State.level2selected[self.Level]
         
     depth = self.Level
     children = len(self.ChildList)
@@ -106,8 +129,6 @@ def eval6(self):
     else:
         return -a*N1 - b*depth -c*np.max(np.sqrt(N)-SN,0)*S - d*children + e*self.FirstEv
 
-def eval1(self):
-    return self.MeanEv
 
 def eval2(self):
     return self.CurrentEv/self.NumSimulations

@@ -13,6 +13,8 @@ from scipy.stats import truncnorm
 # ------------------------ DEFINICION DE CLASE NODO Y SUS METODOS -------------------------
 # Esta clase define la informacion que se guarda en el nodo (cada nodo se guarda en el mapa StateMap)
 
+def define_seed(seed):
+    random.seed(seed)
 
 class State:
     id_ = 0
@@ -37,7 +39,7 @@ class State:
         self.Path = [] #Pila de nodos (desde la raiz) para llegar al nodo actual. Utiliza el metodo extend()
         self.NumSimulations = 0 # Numero de veces que el nodo ha sido simulado
         self.Selected = False # Mark if the node has been selected
-        
+        self.NumChild = len(self.ChildList)
         self.IdLastChild = None
         self.Parent = None
         self.StateEv = 0

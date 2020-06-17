@@ -8,6 +8,9 @@ import math
 import random
 import properties as pr
 
+def define_seed(seed):
+    random.seed(seed)
+
 
 class Node:
     

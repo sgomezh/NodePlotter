@@ -5,6 +5,8 @@ import simulation as sm
 import properties as pr
 from camera import Camera
 import reader as rd
+import state as st
+import sys
 
 def click_node(NOS,id,n_manipulator):
     id_first_child = n_manipulator.generate_son(id)
@@ -18,16 +20,18 @@ def click_node(NOS,id,n_manipulator):
             newColor = pr.StateColor(node.id, len(n_manipulator.nodes)) # tifa: Funcion que asigna un color
             node.color_to(newColor)
 
-def main(NOS, file):
+def main(NOS, option, N, file):
     raiz = Node([27, 27], [200, 200, 200], 1, 0) #tifa: posicion y color definido (?)
     #print(raiz)
     n_manipulator = node_manipulator.NodeManipulator(raiz)   
-    pygame.init()
-    #screen = pygame.Surface((900, 500), pygame.SRCALPHA, 32)
-    screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
-    #screen = pygame.display.set_mode((900, 500), pygame.SRCALPHA, 32)
-    pygame.display.set_caption("Node Plotter")
-    done = False
+
+    if option != 2:
+        pygame.init()
+        #screen = pygame.Surface((900, 500), pygame.SRCALPHA, 32)
+        screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+        #screen = pygame.display.set_mode((900, 500), pygame.SRCALPHA, 32)
+        pygame.display.set_caption("Node Plotter")
+        done = False
 
     if file:
         stateList = rd.reader(file)
@@ -48,15 +52,42 @@ def main(NOS, file):
                 #node.update()
                 newColor = pr.StateColor(node.id, len(n_manipulator.nodes)) # tifa: Funcion que asigna un color
                 node.color_to(newColor)
-            
+        print("bestEv", st.State.bestEv)          
         n_manipulator.update()
 
         screen.fill((33, 33, 33))
         n_manipulator.draw(screen)
         pygame.display.update()
 
+    if option == 1 :
+
+        for i in range(N):
+            id = sm.BestState()
+            if id == None: continue # do nothing
+            pos_x, pos_y = n_manipulator.nodes[id].pos
+    
+            click_node(NOS,id,n_manipulator)
+        print("bestEv", st.State.bestEv)   
+
+        n_manipulator.update()
+
+        screen.fill((33, 33, 33))
+        n_manipulator.draw(screen)
+        pygame.display.update()
+    
+    if option == 2:
+
+        for i in range(N):
+            id = sm.BestState()
+            if id == None: continue # do nothing
+            pos_x, pos_y = n_manipulator.nodes[id].pos
+            click_node(NOS,id,n_manipulator)
+        print("bestEv", st.State.bestEv) 
+        sys.exit(0)
 
     while not done:
+
+       
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 done = True
@@ -70,9 +101,7 @@ def main(NOS, file):
                     
                 click_node(NOS,id,n_manipulator)
                 #n_manipulator.nodes[id_child].color_to(pr.StateColor(id_child))
-
-            '''else:
-                print("apreto afuera") #tifa: aqui detecta si apreta afuera o no del nodo'''
+        
 
         pressed = pygame.key.get_pressed()
         if pressed[pygame.K_w]:
@@ -102,6 +131,8 @@ def main(NOS, file):
         n_manipulator.draw(screen)
         pygame.display.update()
         
+
+
 
 
 '''if __name__ == '__main__':

@@ -2,6 +2,7 @@ import node_manipulator as n_manipulator
 import simulation as sm
 import graphics as gp
 
+
 def reader (file):
     # abre un archivo de prueba txt
     archive = open(file, 'r')
@@ -39,5 +40,3 @@ def reader (file):
     archive.close()
 
     return stateList
-
-

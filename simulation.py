@@ -11,7 +11,10 @@ import paramiko
 import random
 from scipy.stats import truncnorm
 # ---------------------------------------------------- GENERADOR DE CLAVES ----------------------------------------------------------
-
+def define_seed(seed):
+    random.seed(seed)
+    np.random.seed(seed)
+    
 #Parameters of the Fake Simulator
 max_child = 100  # max number of children per node
 init_sigma = 0.01 # std deviation in the root node
