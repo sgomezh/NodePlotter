@@ -5,8 +5,7 @@ import numpy as np
 import random
 import math as mt
 
-def define_seed(seed):
-    random.seed(seed)
+
 
 def eval(self):
     if self.V<=0.0:  #nodo sin hijos
@@ -16,8 +15,8 @@ def eval(self):
         return -np.inf 
     
     #Change by your prefered heuristic
-    return BeamSearch_CurrentEv(self, 3)
-    #return BFS(self)
+    #return BeamSearch(self, 3)
+    return BFS(self)
 
 
 ############# Heuristic Functions ###############

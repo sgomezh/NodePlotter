@@ -8,6 +8,8 @@ import reader as rd
 import state as st
 import sys
 
+
+
 def click_node(NOS,id,n_manipulator):
     id_first_child = n_manipulator.generate_son(id)
     for i in range(1,NOS):
@@ -22,10 +24,10 @@ def click_node(NOS,id,n_manipulator):
 
 def main(NOS, option, N, file):
     raiz = Node([27, 27], [200, 200, 200], 1, 0) #tifa: posicion y color definido (?)
-    #print(raiz)
+    print(option)
     n_manipulator = node_manipulator.NodeManipulator(raiz)   
 
-    if option != 2:
+    if option == "interactive_mode":
         pygame.init()
         #screen = pygame.Surface((900, 500), pygame.SRCALPHA, 32)
         screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
@@ -33,7 +35,21 @@ def main(NOS, option, N, file):
         pygame.display.set_caption("Node Plotter")
         done = False
 
-    if file:
+        for i in range(N):
+            id = sm.BestState()
+            if id == None: continue # do nothing
+            pos_x, pos_y = n_manipulator.nodes[id].pos
+    
+            click_node(NOS,id,n_manipulator)
+        print("bestEv", st.State.bestEv)   
+
+        n_manipulator.update()
+
+        screen.fill((33, 33, 33))
+        n_manipulator.draw(screen)
+        pygame.display.update()
+
+    if option == "read_file":
         stateList = rd.reader(file)
         lenght = len(stateList)
         for i in range(lenght):
@@ -59,35 +75,9 @@ def main(NOS, option, N, file):
         n_manipulator.draw(screen)
         pygame.display.update()
 
-    if option == 1 :
-
-        for i in range(N):
-            id = sm.BestState()
-            if id == None: continue # do nothing
-            pos_x, pos_y = n_manipulator.nodes[id].pos
-    
-            click_node(NOS,id,n_manipulator)
-        print("bestEv", st.State.bestEv)   
-
-        n_manipulator.update()
-
-        screen.fill((33, 33, 33))
-        n_manipulator.draw(screen)
-        pygame.display.update()
-    
-    if option == 2:
-
-        for i in range(N):
-            id = sm.BestState()
-            if id == None: continue # do nothing
-            pos_x, pos_y = n_manipulator.nodes[id].pos
-            click_node(NOS,id,n_manipulator)
-        print("bestEv", st.State.bestEv) 
-        sys.exit(0)
 
     while not done:
 
-       
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 done = True

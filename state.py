@@ -13,8 +13,6 @@ from scipy.stats import truncnorm
 # ------------------------ DEFINICION DE CLASE NODO Y SUS METODOS -------------------------
 # Esta clase define la informacion que se guarda en el nodo (cada nodo se guarda en el mapa StateMap)
 
-def define_seed(seed):
-    random.seed(seed)
 
 class State:
     id_ = 0

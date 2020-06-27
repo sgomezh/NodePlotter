@@ -1,4 +1,3 @@
-
 # ------------------------ LIBRERIAS -------------------------
 import math as mt
 import numpy as np
@@ -11,14 +10,12 @@ import paramiko
 import random
 from scipy.stats import truncnorm
 # ---------------------------------------------------- GENERADOR DE CLAVES ----------------------------------------------------------
-def define_seed(seed):
-    random.seed(seed)
-    np.random.seed(seed)
+
     
 #Parameters of the Fake Simulator
 max_child = 100  # max number of children per node
 init_sigma = 0.01 # std deviation in the root node
-extrachild_penalty = 0.005 # penalización adicional por hijo extra
+extrachild_penalty = 0.001 # penalización adicional por hijo extra
 
 
 
@@ -54,16 +51,22 @@ def CreateState(key, parent, actions, eval):
               
     # Se llama a simular el nodo para inicializarlo (Ver clase Nodo)
     StateMap[key].AddSimulation(eval, actions)
+    if eval > state.State.bestEv:
+        state.State.bestEv=eval
+     
 
 def truncate_normal(min,max,mu,sigma):
-     return truncnorm.rvs((min - mu) / sigma, 
+     if sigma==0:
+        return mu
+     else:
+        return truncnorm.rvs((min - mu) / sigma, 
                (max - mu) / sigma, loc=mu, scale=sigma, size=1)[0]
     
 def compute_parameters(parentEv, mu_parent, sigma_parent, V, id_child):
-    if V<0.05: 
+    if V<0.01: 
         v = V
     else:
-        v =  random.uniform (0.0,0.05)
+        v =  random.uniform (0.0,0.01)
 
     sigma_child = (V-v)*init_sigma
     if id_child==1:

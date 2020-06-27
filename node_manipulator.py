@@ -7,8 +7,6 @@ from camera import Camera
 import simulation as sm
 import properties as pr
 
-def define_seed(seed):
-    random.seed(seed)
 
 # Necesita graphviz pero de C y pygraphviz de python. usar:
 # pip3 install --install-option="--include-path=/usr/local/include/"
