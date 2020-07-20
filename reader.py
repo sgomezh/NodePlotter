@@ -40,3 +40,4 @@ def reader (file):
     archive.close()
 
     return stateList
+

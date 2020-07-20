@@ -7,39 +7,8 @@ import math as mt
 
 
 
-def eval(self):
-    if self.V<=0.0:  #nodo sin hijos
-        return -np.inf
-    
-    if len(self.ChildList) >= self.NumActions:  #No tiene más acciones
-        return -np.inf 
-    
-    #Change by your prefered heuristic
-    #return BeamSearch(self, 3)
-    return BFS(self)
+#-----------------------------FUNCION DE EVALUACION---------------------------------------
 
-
-############# Heuristic Functions ###############
-
-## Components of the state (self)
-# bestEv 
-# worstEv 
-# level2selected = {} #Number of nodes selected by level of the tree
-# level2nodes = {} #Number of nodes by lebel
-
-# self.id # Clave o identificador del nodo. Esta es la que se asocia con StateMap
-# self.FirstEv # Primera evaluacion del nodo, una vez asignada no se puede cambiar
-# self.CurrentEv  # Almacena la evaluacion actual, cambia cada vez que se simula el nodo
-# self.MeanEv # Promedio de todas las evaluaciones obtenidas
-# self.StdDev  # Desviacion estandar de todas las evaluaciones obtenidas
-# self.BestEv  # La mayor evaluacion obtenida
-# self.WorstEv  #Peor evaluacion del nodo
-# self.NumActions  # Numero total de casos posibles producidos por el simulador
-# self.ChildList []  # Esto representa una  lista dinamica, para apregar datos se utiliza el metodo append()
-# self.NumSimulations # Numero de veces que el nodo ha sido simulado
-# self.Selected # Mark if the node has been selected
-# self.Parent
-# self.Level  # nivel del nodo
 
 ### Específicos para FakeEvaluation
 # self.mu 
@@ -47,30 +16,39 @@ def eval(self):
 # self.V 
 # self.fakeEv 
 
+############# Heuristic Functions ###############
+
 #Búsqueda en profundidad (nodo más profundo)
-def DFS (self):
+def DFS(self):
+  
     return self.Level
 
 #Búsqueda en achura (nodo menos profundo)
-def BFS (self):
+def BFS(self):
+
     return -self.Level
 
 #Búsqueda en profundidad (informada)
 def informed_DFS (self):
+
     return self.Level*100 + self.FirstEv
 
 #Búsqueda en achura (informada)
 def informed_BFS (self):
+
     return -self.Level*100 + self.FirstEv
 
 def bestFirstEv(self):
+
     return self.FirstEv
 
 def bestMeanEv(self):
+
     return self.MeanEv
 
-def BeamSearch (self, W):  
-    SN=0;
+def BeamSearch (self, W): 
+ 
+    SN=0
     if self.Level in state.State.level2selected:
         SN = state.State.level2selected[self.Level]
         
@@ -84,9 +62,10 @@ def BeamSearch (self, W):
     else:
         if children >= W: return -np.inf# se descarta
         if not self.Selected and SN>=W: return -np.inf
-        return -b*depth + e*self.FirstEv  
+        return -b*depth + e*self.FirstEv 
 
-def BeamSearch_CurrentEv (self, W):  
+def BeamSearch_CurrentEv (self, W): 
+
     SN=0
     if self.Level in state.State.level2selected:
         SN = state.State.level2selected[self.Level] 
@@ -106,7 +85,8 @@ def BeamSearch_CurrentEv (self, W):
         return (-b*depth + e*self.FirstEv) 
 
 #BeamSearch like evaluation
-def eval6(self):
+def BSearch2(self):
+    
     if self.V==0.0:
         return -np.inf
     
@@ -129,10 +109,11 @@ def eval6(self):
         return -a*N1 - b*depth -c*np.max(np.sqrt(N)-SN,0)*S - d*children + e*self.FirstEv
 
 
-def eval2(self):
+def CurrentEv_NumSimulations(self):
     return self.CurrentEv/self.NumSimulations
 
 def mcts(self):
+    
     if self.Parent != None:
         Ni = self.Parent.NumChild+2
     else:
@@ -141,10 +122,38 @@ def mcts(self):
     UTC = self.MeanEv + random.randint(1,50) * mt.sqrt(mt.log(Np)/Ni)
     return UTC
 
-def eval4(self):
+'''def eval4(self):
+   
     return mt.log((self.BestEv - self.WorstEv) / (self.StdDev+1))
    
 def eval10(self):
+
     if self.V==0.0:
         return -np.inf
-    return (len(sm.StateMap) - self.NumSimulations) * self.MeanEv
+    return (len(sm.StateMap) - self.NumSimulations) * self.MeanEv'''
+#---------------------------DEFINICION DEL MAPA DE HEURISTICAS--------------------------------
+
+evalMap={}
+evalMap["BFS"] = BFS
+evalMap["DFS"] = DFS
+evalMap["informed_DFS"] = informed_DFS 
+evalMap["informed_BFS"] = informed_BFS
+evalMap["bestFirstEv"] = bestFirstEv
+evalMap["bestMeanEv"] = bestMeanEv
+evalMap["BeamSearch "] = BeamSearch
+evalMap["BeamSearch_CurrentEv"] = BeamSearch_CurrentEv
+evalMap["BSearch2"] = BSearch2
+evalMap["CurrentEv_NumSimulations"] = CurrentEv_NumSimulations
+evalMap["mcts"] = mcts
+
+def eval(self, heuristic):
+    if self.V<=0.0:  #nodo sin hijos
+        return -np.inf
+    
+    if len(self.ChildList) >= self.NumActions:  #No tiene más acciones
+        return -np.inf 
+    
+    #Change by your prefered heuristic
+    #return BeamSearch(self, 3)
+    return evalMap[heuristic](self)
+

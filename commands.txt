@@ -1,0 +1,9 @@
+--mode= automatic_mode --seed= 1 --nos= 2 --n= 100
+--mode= automatic_mode --seed= 3 --nos= 2 --n= 100
+--mode= automatic_mode --seed= 7 --nos= 2 --n= 100
+--mode= automatic_mode --seed= 9 --nos= 2 --n= 100
+--mode= automatic_mode --seed= 13 --nos= 2 --n= 100
+--mode= automatic_mode --seed= 20 --nos =2 --n= 100
+--mode= automatic_mode --seed= 23 --nos= 2 --n= 100
+--mode= automatic_mode --seed= 27 --nos= 2 --n= 100
+--mode= automatic_mode --seed= 30 --nos= 2 --n= 100
