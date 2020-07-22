@@ -67,11 +67,11 @@ class NodeManipulator:
             fakeMean = str(sm.StateMap[self.node_selected.id].mu)
             #tifa: solo queda poner las variables en el texto. Imprime hacia el lado, no hacia abajo como deberia ser.
             self.label = []
-            #self.label.append(self.font.render("Nodo " + str(self.node_selected.id), True, (255, 200, 200), (40, 40, 40)))
+            self.label.append(self.font.render("Nodo " + str(self.node_selected.id), True, (255, 200, 200), (40, 40, 40)))
             self.label.append(self.font.render("Ev: " + str(round(float(firstEv)*10000)/100), True, (255, 200, 200), (40, 40, 40)))
-            self.label.append(self.font.render("Mean: " + str(round(float(meanEv)*10000)/100), True, (255, 200, 200), (40, 40, 40)))
-            self.label.append(self.font.render("FakeMean: " + str(round(float(fakeMean)*10000)/100), True, (255, 200, 200), (40, 40, 40)))
-            self.label.append(self.font.render("act: " + str(Actions), True, (255, 200, 200), (40, 40, 40)))
+            #self.label.append(self.font.render("Mean: " + str(round(float(meanEv)*10000)/100), True, (255, 200, 200), (40, 40, 40)))
+            #self.label.append(self.font.render("FakeMean: " + str(round(float(fakeMean)*10000)/100), True, (255, 200, 200), (40, 40, 40)))
+            #self.label.append(self.font.render("act: " + str(Actions), True, (255, 200, 200), (40, 40, 40)))
             
             
 

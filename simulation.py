@@ -14,7 +14,7 @@ from scipy.stats import truncnorm
     
 #Parameters of the Fake Simulator
 max_child = 100  # max number of children per node
-init_sigma = 0.01 # std deviation in the root node
+init_sigma = 0.1 # std deviation in the root node
 extrachild_penalty = 0.001 # penalización adicional por hijo extra
 
 
