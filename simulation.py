@@ -6,7 +6,6 @@ import numpy as np
 import subprocess
 import state
 import properties as pr
-import paramiko
 import random
 from scipy.stats import truncnorm
 # ---------------------------------------------------- GENERADOR DE CLAVES ----------------------------------------------------------
@@ -23,12 +22,12 @@ extrachild_penalty = 0.001 # penalización adicional por hijo extra
 StateMap = {}
 StateMap[0] = state.State(None, 0)
 
-def BestState():
+def BestState(heuristic):
     if len(StateMap)==1: return 0
     bestEval = -100000000
     bestState = None
     for (key,state) in StateMap.items():
-        ev = state.eval()
+        ev = state.eval(heuristic)
         if bestEval < ev:
             bestEval = ev
             bestState = key

@@ -7,6 +7,7 @@ from camera import Camera
 import reader as rd
 import state as st
 import sys
+import heuristics as h
 
 
 
@@ -19,15 +20,17 @@ def click_node(NOS,id,n_manipulator):
         sm.Simulation(id, id_first_child, NOS)
         for node in n_manipulator.nodes:
             #node.update()
-            newColor = pr.StateColor(node.id, len(n_manipulator.nodes)) # tifa: Funcion que asigna un color
+            newColor = pr.StateColor(node.id, len(n_manipulator.nodes)) 
             node.color_to(newColor)
 
-def main(NOS, option, N, file):
-    raiz = Node([27, 27], [200, 200, 200], 1, 0) #tifa: posicion y color definido (?)
-    print(option)
+def main(heuristic, NOS, mode, N, file):
+
+    #se define la raiz y su color
+    raiz = Node([27, 27], [200, 200, 200], 1, 0) 
+    
     n_manipulator = node_manipulator.NodeManipulator(raiz)   
 
-    if option == "interactive_mode":
+    if mode == "interactive_mode":
         pygame.init()
         #screen = pygame.Surface((900, 500), pygame.SRCALPHA, 32)
         screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
@@ -36,11 +39,12 @@ def main(NOS, option, N, file):
         done = False
 
         for i in range(N):
-            id = sm.BestState()
+            id = sm.BestState(heuristic)
             if id == None: continue # do nothing
             pos_x, pos_y = n_manipulator.nodes[id].pos
     
             click_node(NOS,id,n_manipulator)
+
         print("bestEv", st.State.bestEv)   
 
         n_manipulator.update()
@@ -49,7 +53,7 @@ def main(NOS, option, N, file):
         n_manipulator.draw(screen)
         pygame.display.update()
 
-    if option == "read_file":
+    if mode == "read_file":
         stateList = rd.reader(file)
         lenght = len(stateList)
         for i in range(lenght):

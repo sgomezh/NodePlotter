@@ -1,10 +1,8 @@
 
 # ------------------------ LIBRERIAS -------------------------
-import networkx as nx
+
 import math as mt
 import numpy as np
-import plotly.graph_objs as go
-import networkx.drawing as nxdraw
 import simulation as sm
 import properties as pr
 import random
@@ -60,8 +58,8 @@ class State:
                 State.level2nodes[self.Level] = 1
             
 # ------------------------ Evaluación de un estado ---------------------- #
-    def eval(self):
-        return h.eval(self)
+    def eval(self, heuristic):
+        return h.eval(self, heuristic)
 
 # ------------------------- Mark selected ---------------------------- #
     def set_selected(self):
