@@ -47,10 +47,10 @@ def main(heuristic, mode, seed, N, NOS):
         print("bestEv", st.State.bestEv)     
         sys.exit(0)
 
-        # Se llama a la funcion que dibuja el grafo
-        gp.main(heuristic, NOS, mode, N, file)
+    # Se llama a la funcion que dibuja el grafo
+    gp.main(heuristic, NOS, mode, N, file)
 
-        #Se escribe el resultado en el archivo
-        #writter(heuristic, mode, seed, NOS, N, beststate)
+    #Se escribe el resultado en el archivo
+    #writter(heuristic, mode, seed, NOS, N, beststate)
         
     

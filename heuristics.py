@@ -46,8 +46,8 @@ def bestMeanEv(self):
 
     return self.MeanEv
 
-def BeamSearch (self, W): 
- 
+def BeamSearch5 (self): 
+    W=5
     SN=0
     if self.Level in state.State.level2selected:
         SN = state.State.level2selected[self.Level]
@@ -140,7 +140,7 @@ evalMap["informed_DFS"] = informed_DFS
 evalMap["informed_BFS"] = informed_BFS
 evalMap["bestFirstEv"] = bestFirstEv
 evalMap["bestMeanEv"] = bestMeanEv
-evalMap["BeamSearch "] = BeamSearch
+evalMap["BeamSearch5"] = BeamSearch5
 evalMap["BeamSearch_CurrentEv"] = BeamSearch_CurrentEv
 evalMap["BSearch2"] = BSearch2
 evalMap["CurrentEv_NumSimulations"] = CurrentEv_NumSimulations
