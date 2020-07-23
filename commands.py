@@ -1,7 +1,8 @@
 #----------------------------------LIBRERIAS-----------------------------------
 import sys
 import argparse
-import main as m
+import numpy as np
+import random 
 #----------------------------------DEFINICION DE COMANDOS-----------------------------------
 parser = argparse.ArgumentParser(description='comandos',)
 parser.add_argument('--heuristic', action="store", dest="heuristic", type=str)
@@ -18,9 +19,14 @@ print('n     = {!r}'.format(results.n))'''
 
 heuristic = str(results.heuristic)
 mode = str(results.mode)
-seed = str(results.seed)
+seed = int(results.seed)
 NOS = str(results.nos)
 N = str(results.n)
+
+#Esto debe ser llamado antes de cualquier libreria interna
+random.seed(seed)
+np.random.seed(seed)
+
 
 '''if results.mode == None:
     mode = "interactive_mode"
@@ -44,11 +50,12 @@ else:
 
 print("heuristic= " + heuristic)
 print("mode= " + mode)
-print("seed= " + seed)
+print("seed= " + str(seed))
 print("NOS= " + NOS)
 print("N= " + N)
 
-m.main(heuristic, mode, seed, N, NOS)
+import main as m
+m.main(heuristic, mode, N, NOS)
 
 
 

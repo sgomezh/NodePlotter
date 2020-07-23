@@ -13,9 +13,15 @@ from scipy.stats import truncnorm
     
 #Parameters of the Fake Simulator
 max_child = 100  # max number of children per node
-init_sigma = 0.1 # std deviation in the root node
-extrachild_penalty = 0.001 # penalización adicional por hijo extra
+mean_depth = 20 # profundidad media
+init_sigma = 0.02 # std deviation of the children simulations
+factor_sigma = 10 # init_sigma/factor_sigma is the std deviation of mu
+init_mu = 0.9
+init_V = 1.0
 
+extrachild_penalty = 0.00 # penalización adicional por hijo extra
+
+maxv = 2*(init_V/mean_depth)
 
 
 # Se inicializa el mapa y se crea la primera casilla (nodo raiz)
@@ -62,17 +68,15 @@ def truncate_normal(min,max,mu,sigma):
                (max - mu) / sigma, loc=mu, scale=sigma, size=1)[0]
     
 def compute_parameters(parentEv, mu_parent, sigma_parent, V, id_child):
-    if V<0.01: 
-        v = V
-    else:
-        v =  random.uniform (0.0,0.01)
+    v =  random.uniform (0.0,maxv)
+    if v>V : v=V
 
     sigma_child = (V-v)*init_sigma
     if id_child==1:
         firstEv = parentEv
         mu_child = ((V-v)*mu_parent + v*firstEv)/V
     else:
-        mu_child = truncate_normal(0,1,mu_parent - (id_child-1)*extrachild_penalty, sigma_child)
+        mu_child = truncate_normal(0,1,mu_parent - (id_child-1)*extrachild_penalty, sigma_child/factor_sigma)
             
         if sigma_child>0:
             firstEv = truncate_normal(0,1,mu_child,sigma_child)
@@ -102,7 +106,7 @@ def Simulation(ParentKey, ChildKey, NOS):
         
         V2 = StateMap[ChildKey].V
         if V2 > 0:
-            StateMap[ChildKey].NumActions = int(np.sqrt(1-(1-V2)*(1-V2))*max_child)
+            StateMap[ChildKey].NumActions = int(V2*max_child)
         else:
             StateMap[ChildKey].NumActions = 0
         #int(random.uniform(StateMap[ChildKey].V,1)*max_child)

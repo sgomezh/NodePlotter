@@ -45,9 +45,9 @@ class State:
             
         if id==0:
             self.Level = 0 # nivel del nodo
-            self.mu = 0.9
+            self.mu = sm.init_mu
             self.sigma = sm.init_sigma
-            self.V = 1
+            self.V = sm.init_V
             self.fakeEv = truncnorm.rvs(
                 (- self.mu) / self.sigma, (1 - self.mu) / self.sigma, loc=self.mu, scale=self.sigma, size=1)[0] 
         else:

@@ -18,16 +18,13 @@ def non_interactive_expand(NOS,id):
         for i in range(1,NOS):
             sm.Simulation(id, id_first_child, NOS)
 
-def main(heuristic, mode, seed, N, NOS):
+def main(heuristic, mode, N, NOS):
 
     #se castean algunas variables
-    seed = int(seed)
     N = int(N)
     NOS = int(NOS)
     
     #se define la seed para los números random
-    random.seed(seed)
-    np.random.seed(seed)
 
     file = None
 
