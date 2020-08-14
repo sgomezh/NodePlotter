@@ -47,22 +47,10 @@ def bestMeanEv(self):
     return self.MeanEv
 
 def BeamSearch5 (self): 
-    W=5
-    SN=0
-    if self.Level in state.State.level2selected:
-        SN = state.State.level2selected[self.Level]
-        
-    depth = self.Level
-    b=10000; e=1
-    children = len(self.ChildList)
+    return BeamSearch_CurrentEv (self, 5)
 
-    if self.id==0: #root node
-        if children >= W*W: return -np.inf
-        return -b*depth
-    else:
-        if children >= W: return -np.inf# se descarta
-        if not self.Selected and SN>=W: return -np.inf
-        return -b*depth + e*self.FirstEv 
+def BeamSearch3 (self): 
+    return BeamSearch_CurrentEv (self, 3)
 
 def BeamSearch_CurrentEv (self, W): 
 
@@ -140,6 +128,7 @@ evalMap["informed_DFS"] = informed_DFS
 evalMap["informed_BFS"] = informed_BFS
 evalMap["bestFirstEv"] = bestFirstEv
 evalMap["bestMeanEv"] = bestMeanEv
+evalMap["BeamSearch3"] = BeamSearch3
 evalMap["BeamSearch5"] = BeamSearch5
 evalMap["BeamSearch_CurrentEv"] = BeamSearch_CurrentEv
 evalMap["BSearch2"] = BSearch2
