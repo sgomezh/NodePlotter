@@ -3,10 +3,10 @@ import writter as w
 
 #se definen algunas variables antes de iterar
 mode= "automatic_mode"
-NOS= "2"
-heuristic= "BFS"
+NOS= "3"
+heuristic= "tifa"
 iterations = 10
-evaluationSum = 0
+evaluationSum = 0   
 pos = 0
 
 #itera el comando dentro del for y cambia los parametros numericos
@@ -15,7 +15,7 @@ for i in range(1,iterations+1):
 
 
     seed = str(i*3)
-    N = str(i*10)
+    N = str(500)
 
     output = str(subprocess.check_output("python commands.py --heuristic " + heuristic + " --mode " + mode + " --seed " + seed + " --nos " + NOS + " --n " + N))
 
