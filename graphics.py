@@ -90,7 +90,7 @@ def main(heuristic, NOS, mode, N, file):
             if event.type == pygame.MOUSEBUTTONDOWN:
                 x, y = event.pos
                 id = n_manipulator.get_node_id(x,y)
-                if id == -1: #ningun nodo seleccionado (seleccion automatica)
+                if id == -1 or len(StateMap[id].ChildList) >= StateMap[id].NumActions : #ningun nodo seleccionado (seleccion automatica)
                     id = sm.BestState(heuristic)
                     if id == None: continue # do nothing
                     pos_x, pos_y = n_manipulator.nodes[id].pos
