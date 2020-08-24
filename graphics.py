@@ -12,16 +12,18 @@ import heuristics as h
 
 
 def click_node(NOS,id,n_manipulator):
-    id_first_child = n_manipulator.generate_son(id)
-    for i in range(1,NOS):
-        n_manipulator.generate_son(id)
+    
+    for i in range(0,NOS):
+        if i==0: id_first_child = n_manipulator.generate_son(id)
+        else: n_manipulator.generate_son(id)
            
         #print("id_child= ", id_first_child)
         sm.Simulation(id, id_first_child, NOS)
-        for node in n_manipulator.nodes:
-            #node.update()
-            newColor = pr.StateColor(node.id, len(n_manipulator.nodes)) 
-            node.color_to(newColor)
+        
+    for node in n_manipulator.nodes:
+        #node.update()
+        newColor = pr.StateColor(node.id, len(n_manipulator.nodes)) 
+        node.color_to(newColor)
 
 def main(heuristic, NOS, mode, N, file):
 
@@ -79,7 +81,7 @@ def main(heuristic, NOS, mode, N, file):
         n_manipulator.draw(screen)
         pygame.display.update()
 
-
+    
     while not done:
 
         for event in pygame.event.get():

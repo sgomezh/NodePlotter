@@ -139,13 +139,12 @@ def mcts(self):
 
 def tifa(self):
 
-    SN=0 
-    SN2 = 0 
-    TSN = 0
+    SN=0 #numero de nodos seleccionados en el nivel actual
+    SN2 = 0 #numero de nodos seleccionados en el nivel siguiente
+    TSN = 0 #numero de nodos totales en el nivel actual
 
     #se verifica que el nivel seleccionado esté en el mapa
     if self.Level in state.State.level2selected: 
-        #numero de nodos seleccionados en el nivel actual
         SN = state.State.level2selected[self.Level] 
     
     #se define el siguiente nivel
@@ -153,12 +152,10 @@ def tifa(self):
     
     #se verifica que el nivel seleccionado esté en el mapa
     if nextLevel in state.State.level2selected: 
-        #numero de nodos seleccionados en el nivel siguiente
         SN2 = state.State.level2selected[nextLevel] 
 
     #se verifica que el nivel 
     if self.Level in state.State.level2nodes:
-        #numero de nodos totales en el nivel actual
         TSN = state.State.level2nodes[self.Level]
 
     #la profundidad del nodo es el nivel en el que se encuentra

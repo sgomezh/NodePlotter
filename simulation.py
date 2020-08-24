@@ -15,7 +15,7 @@ from scipy.stats import truncnorm
 max_child = 100  # max number of children per node
 mean_depth = 20 # profundidad media
 init_sigma = 0.02 # std deviation of the children simulations
-factor_sigma = 10 # init_sigma/factor_sigma is the std deviation of mu
+factor_sigma = 3 # init_sigma/factor_sigma is the std deviation of mu
 init_mu = 0.9
 init_V = 1.0
 

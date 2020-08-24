@@ -17,10 +17,12 @@ print('nos     = {!r}'.format(results.nos))
 print('n     = {!r}'.format(results.n))'''
 #----------------------------------ASIGNACION DE VALORES-----------------------------------
 
+NOS="1"
+
 heuristic = str(results.heuristic)
 mode = str(results.mode)
 seed = int(results.seed)
-NOS = str(results.nos)
+if results.nos!=None: NOS = str(results.nos)
 N = str(results.n)
 
 #Esto debe ser llamado antes de cualquier libreria interna
