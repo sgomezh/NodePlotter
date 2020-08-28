@@ -115,7 +115,7 @@ def compute_parameters(parentEv, mu_parent, sigma_parent, V, id_child):
             firstEv = mu_child
     return firstEv, mu_child, sigma_child, v
 
-def Simulation(ParentKey, ChildKey, NOS):
+def FakeSimulation(ParentKey, ChildKey, NOS):
     if ParentKey==0:
         bsg_id=0
     else: bsg_id = StateMap[ParentKey].bsg_id
@@ -134,7 +134,7 @@ def Simulation(ParentKey, ChildKey, NOS):
     
 
 # --- Fake simulations ------- #
-def FakeSimulation(ParentKey, ChildKey, NOS):
+def Simulation(ParentKey, ChildKey, NOS):
 
     id_child = len(StateMap[ParentKey].ChildList)+1
     parentEv = StateMap[ParentKey].fakeEv
