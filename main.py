@@ -43,7 +43,7 @@ def main(heuristic, mode, N, NOS):
             
         print("bestEv", st.State.bestEv)     
         sys.exit(0)
-
+    
 
     # Se llama a la funcion que dibuja el grafo
     gp.main(heuristic, NOS, mode, N, file)

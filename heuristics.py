@@ -4,18 +4,14 @@ import simulation as sm
 import numpy as np
 import random
 import math as mt
-
-
-
-#-----------------------------FUNCION DE EVALUACION---------------------------------------
-
+import scipy.stats as st
 
 ### Específicos para FakeEvaluation
 # self.mu 
 # self.sigma 
 # self.V 
 # self.fakeEv 
-
+#-----------------------------FUNCIONES DE EVALUACION---------------------------------------
 ############# Heuristic Functions ###############
 
 #Búsqueda en profundidad (nodo más profundo)
@@ -37,49 +33,21 @@ def informed_DFS (self):
 def informed_BFS (self):
 
     return -self.Level*100 + self.FirstEv
-
+#Criterio bajo la mejor primera evaluacion
 def bestFirstEv(self):
 
     return self.FirstEv
 
+#Criterio bajo la mejor primera evaluacion
 def bestMeanEv(self):
     return self.MeanEv
 
-def BeamSearch70 (self): 
-    return BeamSearch_CurrentEv (self, 70)
-
-def BeamSearch60 (self): 
-    return BeamSearch_CurrentEv (self, 60)
-
-def BeamSearch100 (self): 
-    return BeamSearch_CurrentEv (self, 100)
-
-def BeamSearch53 (self): 
-    return BeamSearch_CurrentEv (self, 53)
-
-def BeamSearch50 (self): 
-    return BeamSearch_CurrentEv (self, 50)
-
-def BeamSearch21 (self): 
-    return BeamSearch_CurrentEv (self, 21)
-
-def BeamSearch13 (self): 
-    return BeamSearch_CurrentEv (self, 13)
-
-def BeamSearch9 (self): 
-    return BeamSearch_CurrentEv (self, 9)
-
-def BeamSearch7 (self): 
-    return BeamSearch_CurrentEv (self, 7)
-
-def BeamSearch5 (self): 
-    return BeamSearch_CurrentEv (self, 5)
-
-def BeamSearch3 (self): 
-    return BeamSearch_CurrentEv (self, 3)
+#En caso de requerir usar Beam Search con un determinado W, solo basta con cambiar el parametro W
+def BeamSearchW (self): 
+    W=3
+    return BeamSearch_CurrentEv (self, W)
 
 def BeamSearch_CurrentEv (self, W): 
-
     SN=0
     if self.Level in state.State.level2selected:
         SN = state.State.level2selected[self.Level] 
@@ -139,9 +107,9 @@ def mcts(self):
 
 def tifa(self):
 
-    SN=0 
-    SN2 = 0 
-    TSN = 0
+    SN=0 #numero de nodos seleccionados en el nivel actual
+    SN2 = 0 #numero de nodos seleccionados en el siguiente nivel
+    TSN = 0 #numero de nodos totales en el nivel actual
 
     #se verifica que el nivel seleccionado esté en el mapa
     if self.Level in state.State.level2selected: 
@@ -164,7 +132,7 @@ def tifa(self):
     #la profundidad del nodo es el nivel en el que se encuentra
     depth = self.Level 
 
-    #se definen las constantes
+    #se definen las constantes 
     a=1000000
     b=10000
     c=1000
@@ -191,23 +159,117 @@ def tifa(self):
         return -(b*SN2)-(c*max(mt.sqrt(totalNodes-TSN), 0))-d*depth
 
     else:
-        if children >= W: 
-            return -(b*SN2)-(c*max(mt.sqrt(totalNodes-TSN), 0))-d*depth+e*self.MeanEv
+        if children >= (totalNodes - TSN)*W: 
+            return -(b*SN2)-(c*max(mt.sqrt(TSN/totalNodes)), 0)-d*depth+e*self.MeanEv #cambie el totalNodes-TSN por TSN/totalNodes
 
-        if not self.Selected and SN>=W: 
-            return (-a*children)-(b*SN2)-(c*max(1/(mt.log(totalNodes-TSN +0.0001)), 0))
+        if TSN >= (totalNodes - TSN)*W: 
+            return -(b*SN2)-(c*max(mt.sqrt(TSN/totalNodes), 0))-d*depth+e*self.MeanEv-TSN #cambie el totalNodes-TSN por TSN/totalNodes
+
+        #if not self.Selected and SN>=W: 
+            #return (-a*children)-(b*SN2)-(c*max(1/(mt.log(totalNodes-TSN +0.0001)), 0))
         
         return (-b*depth + e*self.MeanEv) 
+def tifa2(self):
+    TSN = 0
+    minDev = 0.001
+    ev = 0.0
+    #datos para calcular la probabilidad 
+    mean = self.MeanEv
+    print("Mean= ", mean)
+    dev = self.StdDev
+    if dev == 0:
+        dev = minDev
+    print("Std Dev= ", dev)
+    data = state.State.bestEv
+    print("Data= ", data)
+    child = len(self.ChildList)
+    print("Num Child= ", child)
 
-'''def eval4(self):
-   
-    return mt.log((self.BestEv - self.WorstEv) / (self.StdDev+1))
-   
-def eval10(self):
+    #se verifica que el nivel 
+    if self.Level in state.State.level2nodes:
+        #numero de nodos totales en el nivel actual
+        TSN = state.State.level2nodes[self.Level]
+    
+    #se definen las constantes para dar prioridad
+    a=1000000
+    b=10000
+    #LEER PAPER DEL MONTECARLO 
+    #se obtiene la probabilidad de que el nodo sea mayor a la mejor evaluacion encontrada hasta el momento
+    #multiplicar esta desv por una constante
+    prob = st.norm.sf(data,mean,dev)
 
-    if self.V==0.0:
-        return -np.inf
-    return (len(sm.StateMap) - self.NumSimulations) * self.MeanEv'''
+    #se genera la evaluacion
+    #ev = a*prob 
+    #probar distintos valores de "b" (despues de 1000 nodos aprox) / comparar con el BeamSearch
+    ev = a*mean*prob - b*child*TSN
+    #ev = a*prob - b*pow(child,TSN)
+
+    #si el promedio es menor al promedio del árbol
+    #if mean < state.State.totalMean:
+
+        #pero su desviación estándar es más alta que la desviación promedio, entonces varía más sus evaluaciones y podría haber un buen resultado
+        #solo se premia al nodo por su desviacion std. 
+        #if dev >= state.State.totalDev:
+            #ev = a*prob*dev - b*child*TSN*mean
+        #sino, si su desviación estándar es más baja que la desviación promedio, quiere decir que ha tenido malas evaluaciones que no han variado mucho
+        #se castiga al nodo por su promedio y desviación std. (le resté importancia a la probabilidad)
+        #if dev < state.State.totalDev:
+            #ev = prob - b*b*child*TSN*mean*dev
+
+    #Si el prmedio es mayor al promedio del arbol
+    #if mean >= state.State.totalMean:
+
+        #pero su desviación estándar es menor a la del árbol, tiene buenas evaluaciones pero no varian mucho
+        #entonces se premia al nodo por su promedio
+        #if dev < state.State.totalDev:
+            #ev = a*pow(mean,-1)*prob - b*child*TSN*dev
+
+        #si la desviacion estándar y el promedio del nodo es más alto que los del árbol, entonces sus evaluaciones podrían variar mucho con resultados prometedores
+        #entonces, se le premia por su promedio y desviación estándar (le quité la constante b)
+        #if dev >= state.State.totalDev:
+            #ev = a*pow(mean,-1)*pow(dev,-1)*prob - child*TSN
+
+    return ev
+
+def tifa3(self):
+    TSN = 0
+    minDev = 0.001
+    ev = 0.0
+    ln = 0
+    x3 = 0
+
+    #datos para calcular la probabilidad 
+    mean = self.MeanEv
+    
+    dev = self.StdDev
+    if dev == 0:
+        dev = minDev
+    #se normaliza la desviación estándar para valores entre 0 y 1
+    dev = abs(mt.sin(dev))
+    data = state.State.bestEv
+    
+    child = len(self.ChildList)
+
+    #se verifica que el nivel 
+    if self.Level in state.State.level2nodes:
+        #numero de nodos totales en el nivel actual
+        TSN = state.State.level2nodes[self.Level]
+    
+    #se definen las constantes para dar prioridad
+    a=1000000
+    b=10000
+    #LEER PAPER DEL MONTECARLO 
+    #se obtiene la probabilidad de que el nodo sea mayor a la mejor evaluacion encontrada hasta el momento
+    #multiplicar esta desv por una constante
+    prob = st.norm.sf(data,mean,dev)
+    x3 =  pow(mean,3)
+    ln = mt.log(dev)
+
+    #ev = x3*prob + ln*child*TSN
+    ev = (x3 + prob * a) + (ln + (child*TSN))
+    
+    return ev
+    
 #---------------------------DEFINICION DEL MAPA DE HEURISTICAS--------------------------------
 
 evalMap={}
@@ -217,25 +279,19 @@ evalMap["informed_DFS"] = informed_DFS
 evalMap["informed_BFS"] = informed_BFS
 evalMap["bestFirstEv"] = bestFirstEv
 evalMap["bestMeanEv"] = bestMeanEv
-evalMap["BeamSearch3"] = BeamSearch3
-evalMap["BeamSearch5"] = BeamSearch5
-evalMap["BeamSearch7"] = BeamSearch7
-evalMap["BeamSearch9"] = BeamSearch9
-evalMap["BeamSearch13"] = BeamSearch13
-evalMap["BeamSearch21"] = BeamSearch21
-evalMap["BeamSearch50"] = BeamSearch50
-evalMap["BeamSearch53"] = BeamSearch53
-evalMap["BeamSearch100"] = BeamSearch100
-evalMap["BeamSearch60"] = BeamSearch60
-evalMap["BeamSearch70"] = BeamSearch70
+evalMap["BeamSearchW"] = BeamSearchW
 evalMap["BeamSearch_CurrentEv"] = BeamSearch_CurrentEv
 evalMap["BSearch2"] = BSearch2
 evalMap["CurrentEv_NumSimulations"] = CurrentEv_NumSimulations
 evalMap["mcts"] = mcts
 evalMap["tifa"] = tifa
+evalMap["tifa2"] = tifa2
+evalMap["tifa3"] = tifa3
+
+
 
 def eval(self, heuristic):
-    if self.V<=0.0:  #nodo sin hijos
+    if self.V <=0.0:  #nodo sin hijos
         return -np.inf
     
     if len(self.ChildList) >= self.NumActions:  #No tiene más acciones

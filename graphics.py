@@ -1,5 +1,5 @@
 import pygame
-from nodeProp import Node #tifa: importa la clase nodo
+from nodeProp import Node 
 import node_manipulator
 import simulation as sm
 import properties as pr
@@ -10,13 +10,10 @@ import sys
 import heuristics as h
 
 
-
 def click_node(NOS,id,n_manipulator):
     id_first_child = n_manipulator.generate_son(id)
     for i in range(1,NOS):
         n_manipulator.generate_son(id)
-           
-        #print("id_child= ", id_first_child)
         sm.Simulation(id, id_first_child, NOS)
         for node in n_manipulator.nodes:
             #node.update()
@@ -32,21 +29,19 @@ def main(heuristic, NOS, mode, N, file):
 
     if mode == "interactive_mode":
         pygame.init()
-        #screen = pygame.Surface((900, 500), pygame.SRCALPHA, 32)
-        screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
-        #screen = pygame.display.set_mode((900, 500), pygame.SRCALPHA, 32)
+        screen = pygame.display.set_mode((900, 500), pygame.SRCALPHA, 32)
         pygame.display.set_caption("Node Plotter")
         done = False
 
         for i in range(N):
+            print("entro al for in range")
             id = sm.BestState(heuristic)
             if id == None: continue # do nothing
             pos_x, pos_y = n_manipulator.nodes[id].pos
     
             click_node(NOS,id,n_manipulator)
 
-        print("bestEv", st.State.bestEv)   
-
+        print("bestEv: ", st.State.bestEv)   
         n_manipulator.update()
 
         screen.fill((33, 33, 33))
@@ -70,7 +65,7 @@ def main(heuristic, NOS, mode, N, file):
 
             for node in n_manipulator.nodes:
                 #node.update()
-                newColor = pr.StateColor(node.id, len(n_manipulator.nodes)) # tifa: Funcion que asigna un color
+                newColor = pr.StateColor(node.id, len(n_manipulator.nodes)) 
                 node.color_to(newColor)
         print("bestEv", st.State.bestEv)          
         n_manipulator.update()
@@ -125,9 +120,3 @@ def main(heuristic, NOS, mode, N, file):
         n_manipulator.draw(screen)
         pygame.display.update()
         
-
-
-
-
-'''if __name__ == '__main__':
-    main(NOS)'''

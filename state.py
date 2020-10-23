@@ -1,6 +1,5 @@
 
 # ------------------------ LIBRERIAS -------------------------
-
 import math as mt
 import numpy as np
 import simulation as sm
@@ -18,6 +17,10 @@ class State:
     worstEv = 100.0
     level2selected = {} #Number of nodes selected by level of the tree
     level2nodes = {} #Number of nodes by lebel
+    totalMean = 0.0 # Promedio de todas las evaluaciones
+    totalSimulations = 0
+    totalDev = 0.0 
+    totalSquareMean = 0.0
 
     def __init__(self, Parent, id):  # Constructor del nodo
 
@@ -48,9 +51,11 @@ class State:
             self.mu = sm.init_mu
             self.sigma = sm.init_sigma
             self.V = sm.init_V
+            #print("V= ", self.V)
             self.fakeEv = truncnorm.rvs(
                 (- self.mu) / self.sigma, (1 - self.mu) / self.sigma, loc=self.mu, scale=self.sigma, size=1)[0] 
         else:
+            self.V = 0.1
             self.Level = self.Parent.Level + 1  # nivel del nodo
             if self.Level in State.level2nodes:
                 State.level2nodes[self.Level] += 1
@@ -79,6 +84,13 @@ class State:
         NewMean= Sum / (self.NumSimulations)
         return NewMean
 
+    def globalMean(self, Evaluation):
+        Data = State.totalMean * (State.totalSimulations-1)
+        Sum = Data + Evaluation
+        totalMean= Sum / (State.totalSimulations)
+        return totalMean
+
+
 # ------------------------ PROMEDIO DE LAS EVALUACIONES AL CUADRADO-------------------------
 
     # Calcula el promedio de los cuadrados cada vez que se hace una simulacion con el nuevo dato (nueva evaluacion)
@@ -88,6 +100,12 @@ class State:
         Sum = Data + (Evaluation**2)
         NewSquareMean = Sum / (self.NumSimulations)
         return NewSquareMean
+    def globalSquareMean(self, Evaluation):
+
+        Data = State.totalSquareMean * (State.totalSimulations-1)
+        Sum = Data + (Evaluation**2)
+        NewSquareMean = Sum / (State.totalSimulations)
+        return NewSquareMean
 
 # ------------------------ DESVIACION ESTANDAR DE LAS EVALUACIONES -------------------------
 
@@ -96,11 +114,74 @@ class State:
 
         SquareMean = self.SquareMeanEv
         Mean = self.MeanEv
-        Diff = np.max(SquareMean - (Mean**2),0)
-        #Verificar
-        #StdDev = mt.sqrt(Diff)
-        #return StdDev
-        return 0.0
+        Diff = SquareMean - (Mean**2)
+        StdDev = float(mt.sqrt(Diff))
+        #print("StdDev= ", StdDev)
+        return StdDev
+
+    def globalDev(self, Evaluation):
+
+        SquareMean = State.totalSquareMean
+        Mean = State.totalMean
+        Diff = SquareMean - (Mean**2)
+        StdDev = float(mt.sqrt(Diff))
+        #print("StdDev= ", StdDev)
+        return StdDev
+
+    '''def RetroSimulation(self, Evaluation):
+
+        #Solo si no hay una primera evaluacion se asigna, sino no
+        if self.FirstEv == 0:
+            self.FirstEv = Evaluation
+
+        # Se calcula la peor o mejor evaluacion
+        if Evaluation > self.BestEv:
+            self.BestEv = Evaluation
+
+        if Evaluation < self.WorstEv:
+            self.WorstEv = Evaluation
+
+        ## update of global variables
+        if Evaluation > State.bestEv:
+            State.bestEv = Evaluation
+
+        if Evaluation < State.worstEv:
+            State.worstEv = Evaluation
+
+        #Variables globales
+        State.totalMean = self.globalMean(Evaluation)
+        State.totalSquareMean = self.globalSquareMean(Evaluation)
+        State.totalDev = self.globalDev(Evaluation)
+        
+        # Se asigna el numero de acciones y segun la evaluacion se calcula el promedio y la desviacion estandar
+        self.MeanEv = self.Mean(Evaluation)
+        self.SquareMeanEv = self.SquareMean(Evaluation)
+        self.StdDev = self.StandardDev(Evaluation)
+        self.CurrentEv = Evaluation'''
+
+        
+#---------------------- RETROPROPAGACION -------------------------------------------------------
+    '''def retropropagation(self, Evaluation):
+
+        currentNode = sm.StateMap[self.id]
+        currentNodeId = sm.StateMap[self.id].id
+        parentNode = None 
+
+        if currentNodeId != 0:
+            while currentNodeId != 0:
+                #Se asigna el padre del nodo
+                parentNode = currentNode.Parent
+                if parentNode == None:
+                    currentNode.RetroSimulation(Evaluation)
+                else:
+                    #Se añade la simulación del hijo al padre
+                    parentNode.RetroSimulation( Evaluation)
+                    #Se actualiza el nodo actual
+                    currentNode = parentNode
+
+        if currentNodeId == 0:
+           sm.StateMap[0].RetroSimulation( Evaluation)'''    
+       
 
 # ------------------------  DE LAS EVALUACIONES -------------------------
 
@@ -129,10 +210,15 @@ class State:
         if Evaluation < State.worstEv:
             State.worstEv = Evaluation
 
+        State.totalMean = self.globalMean(Evaluation)
+        State.totalSquareMean = self.globalSquareMean(Evaluation)
+        State.totalDev = self.globalDev(Evaluation)
+        State.totalSimulations = self.totalSimulations + 1
         # Se asigna el numero de acciones y segun la evaluacion se calcula el promedio y la desviacion estandar
         if Actions != -1: self.NumActions = Actions
+
         self.MeanEv = self.Mean(Evaluation)
         self.SquareMeanEv = self.SquareMean(Evaluation)
         self.StdDev = self.StandardDev(Evaluation)
         self.CurrentEv = Evaluation
-
+        #self.retropropagation( Evaluation)

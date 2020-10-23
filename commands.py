@@ -11,10 +11,6 @@ parser.add_argument('--seed', action="store", dest="seed", type=int)
 parser.add_argument('--nos', action="store", dest="nos", type=int)
 parser.add_argument('--n', action="store", dest="n", type=int)
 results = parser.parse_args()
-'''print('mode     = {!r}'.format(results.mode))
-print('seed     = {!r}'.format(results.seed))
-print('nos     = {!r}'.format(results.nos))
-print('n     = {!r}'.format(results.n))'''
 #----------------------------------ASIGNACION DE VALORES-----------------------------------
 
 heuristic = str(results.heuristic)
@@ -27,33 +23,13 @@ N = str(results.n)
 random.seed(seed)
 np.random.seed(seed)
 
-
-'''if results.mode == None:
-    mode = "interactive_mode"
-else:
-    mode = str(results.mode)
-
-if results.seed == None:
-    seed = 1
-else:
-    seed = int(results.seed)
-
-if results.nos == None:
-    NOS= 2
-else:
-    NOS = int(results.nos)
-
-if results.n == None:
-    N = 3
-else:
-    N = int(results.n)'''
-
+#----------------------------------OUTPUT----------------------------------
 print("heuristic= " + heuristic)
 print("mode= " + mode)
 print("seed= " + str(seed))
 print("NOS= " + NOS)
 print("N= " + N)
-
+#----------------------------------LLAMADA AL MAIN-----------------------------------
 import main as m
 m.main(heuristic, mode, N, NOS)
 
