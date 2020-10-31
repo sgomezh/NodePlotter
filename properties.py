@@ -83,7 +83,7 @@ def StateColor(key, nb_nodes):
         #print("R= ", R)
         #print("G= ", G)
         #print("B= ", B)
-        shade_factor = (key+100)/(nb_nodes+100)
+        shade_factor = 1 #(key+1000)/(nb_nodes+1000)
         R = round(shade_factor*R)
         G = round(shade_factor*G)
         B = round(shade_factor*B)

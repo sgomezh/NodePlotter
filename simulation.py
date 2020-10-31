@@ -15,7 +15,7 @@ from scipy.stats import truncnorm
 max_child = 100  # max number of children per node
 mean_depth = 20 # profundidad media
 init_sigma = 0.02 # std deviation of the children simulations
-factor_sigma = 10 # init_sigma/factor_sigma is the std deviation of mu
+factor_sigma = 3 # init_sigma/factor_sigma is the std deviation of mu
 init_mu = 0.9
 init_V = 1.0
 
@@ -27,6 +27,37 @@ maxv = 2*(init_V/mean_depth)
 # Se inicializa el mapa y se crea la primera casilla (nodo raiz)
 StateMap = {}
 StateMap[0] = state.State(None, 0)
+
+
+# Archivo con árbol de verda
+file1 = open('BR8-0.txt', 'r') 
+count = 0
+
+child_nodes={}
+eval={}
+max_eval=0.0
+while True: 
+    count += 1
+  
+    # Get next line from file 
+    line = file1.readline() 
+    
+    if(count>=20):
+        # if line is empty 
+        # end of file is reached 
+        if not line: 
+            break
+        line= line.strip()
+        elements = line.split(',')
+        if int(elements[1]) not in child_nodes: child_nodes[int(elements[1])]=[]
+        child_nodes[int(elements[1])].append(int(elements[0]))
+        eval[int(elements[0])]= float(elements[2])
+        if float(elements[2]) > max_eval: max_eval=float(elements[2])
+      
+print("max_eval=",max_eval)
+    #if count == 24: break
+file1.close() 
+# ----------------------------------------
 
 def BestState(heuristic):
     if len(StateMap)==1: return 0
@@ -83,6 +114,24 @@ def compute_parameters(parentEv, mu_parent, sigma_parent, V, id_child):
         else:
             firstEv = mu_child
     return firstEv, mu_child, sigma_child, v
+
+def FakeSimulation(ParentKey, ChildKey, NOS):
+    if ParentKey==0:
+        bsg_id=0
+    else: bsg_id = StateMap[ParentKey].bsg_id
+    
+    n_child = len(StateMap[ParentKey].ChildList)
+    
+    id_child = child_nodes[bsg_id][n_child]
+    
+    CreateState(ChildKey, ParentKey, 0, eval[id_child])
+    
+    StateMap[ParentKey].NumActions=len(child_nodes[bsg_id])
+    if id_child in child_nodes: StateMap[ChildKey].NumActions = len(child_nodes[id_child])
+    
+    StateMap[ChildKey].bsg_id = id_child
+    StateMap[ChildKey].V = 1.0
+    
 
 # --- Fake simulations ------- #
 def Simulation(ParentKey, ChildKey, NOS):

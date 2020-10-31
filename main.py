@@ -12,11 +12,11 @@ import node_manipulator as nd
 import nodeProp as np
 #------------------------ INSTRUCCION DESDE EL TERMINAL----------------
 
-def non_interactive_expand(NOS,id):
+def non_interactive_expand(id):
         id_first_child = len(sm.StateMap)
         #print(id_first_child)
-        for i in range(1,NOS):
-            sm.Simulation(id, id_first_child, NOS)
+        #for i in range(1,NOS):
+        sm.Simulation(id, id_first_child, 1)
 
 def main(heuristic, mode, N, NOS):
 
@@ -26,20 +26,16 @@ def main(heuristic, mode, N, NOS):
     
     #se define la seed para los números random
 
-    file = None
-
-    '''if len(sys.argv)>1:
-        # Esta variable almacena el numero de simulaciones que se haran por cada nodo
-        NOS = int(sys.argv[1])
-        if len(sys.argv)>2: 
-            file=sys.argv[2]'''
-                
+    file = None             
 
     if mode == "automatic_mode":
         for i in range(N):
             id = sm.BestState(heuristic)
-            if id == None: continue # do nothing
-            non_interactive_expand(NOS,id)
+            if id == None: print (i); break; #continue # do nothing
+                
+            if len(sm.StateMap[id].ChildList) == 0: i -=1 #el primer hijo no cuenta
+            
+            non_interactive_expand(id)
             
         print("bestEv", st.State.bestEv)     
         sys.exit(0)

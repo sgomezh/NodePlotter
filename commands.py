@@ -13,10 +13,12 @@ parser.add_argument('--n', action="store", dest="n", type=int)
 results = parser.parse_args()
 #----------------------------------ASIGNACION DE VALORES-----------------------------------
 
+NOS="1"
+
 heuristic = str(results.heuristic)
 mode = str(results.mode)
 seed = int(results.seed)
-NOS = str(results.nos)
+if results.nos!=None: NOS = str(results.nos)
 N = str(results.n)
 
 #Esto debe ser llamado antes de cualquier libreria interna
