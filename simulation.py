@@ -57,6 +57,7 @@ while True:
 print("max_eval=",max_eval)
     #if count == 24: break
 file1.close() 
+
 # ----------------------------------------
 
 def BestState(heuristic):

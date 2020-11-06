@@ -11,18 +11,15 @@ import heuristics as h
 
 
 def click_node(NOS,id,n_manipulator):
-<<<<<<< HEAD
     id_first_child = n_manipulator.generate_son(id)
     for i in range(1,NOS):
         n_manipulator.generate_son(id)
-=======
     
     for i in range(0,NOS):
         if i==0: id_first_child = n_manipulator.generate_son(id)
         else: n_manipulator.generate_son(id)
            
         #print("id_child= ", id_first_child)
->>>>>>> 2c5a79c6dfbfa6985fc25cdad85090f0e21eed8b
         sm.Simulation(id, id_first_child, NOS)
         
     for node in n_manipulator.nodes:

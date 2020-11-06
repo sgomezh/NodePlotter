@@ -21,6 +21,7 @@ class State:
     totalSimulations = 0
     totalDev = 0.0 
     totalSquareMean = 0.0
+    lastPosition = 0
 
     def __init__(self, Parent, id):  # Constructor del nodo
 

@@ -5,6 +5,7 @@ import numpy as np
 import random
 import math as mt
 import scipy.stats as st
+import training as t
 
 ### Específicos para FakeEvaluation
 # self.mu 
@@ -108,11 +109,9 @@ def mcts(self):
 def tifa(self):
 
     SN=0 #numero de nodos seleccionados en el nivel actual
-<<<<<<< HEAD
+
     SN2 = 0 #numero de nodos seleccionados en el siguiente nivel
-=======
-    SN2 = 0 #numero de nodos seleccionados en el nivel siguiente
->>>>>>> 2c5a79c6dfbfa6985fc25cdad85090f0e21eed8b
+
     TSN = 0 #numero de nodos totales en el nivel actual
 
     #se verifica que el nivel seleccionado esté en el mapa
@@ -238,7 +237,14 @@ def tifa3(self):
     ev = 0.0
     ln = 0
     x3 = 0
-
+    done = 0
+    vValue = 0
+    lastEv = 0
+    variable = 0
+    a = 1
+    b = 1
+    random = 1
+    rankingValue = 0
     #datos para calcular la probabilidad 
     mean = self.MeanEv
     
@@ -256,19 +262,46 @@ def tifa3(self):
         #numero de nodos totales en el nivel actual
         TSN = state.State.level2nodes[self.Level]
     
-    #se definen las constantes para dar prioridad
-    a=1000000
-    b=10000
-    #LEER PAPER DEL MONTECARLO 
     #se obtiene la probabilidad de que el nodo sea mayor a la mejor evaluacion encontrada hasta el momento
     #multiplicar esta desv por una constante
+
     prob = st.norm.sf(data,mean,dev)
     x3 =  pow(mean,3)
     ln = mt.log(dev)
 
-    #ev = x3*prob + ln*child*TSN
-    ev = (x3 + prob * a) + (ln + (child*TSN))
+    variable, vValue = t.training(random)
     
+    if variable == 1:
+        while done <= 50:
+            a = vValue
+            #ev = x3*prob + ln*child*TSN
+            ev = (x3 + prob * a) + (ln + (child*TSN*b))
+
+            if ev >= lastEv:
+                rankingValue = t.ranking(self.id)
+                print("Ranking= ", rankingValue)
+                return ev
+            else:
+                random = 0
+                t.training(random)
+            done = done + 1
+    
+        
+    if variable == 2:
+        while done <= 50:
+            b = vValue
+            #ev = x3*prob + ln*child*TSN
+            ev = (x3 + prob * a) + (ln + (child*TSN*b))
+
+            if ev >= lastEv:
+                rankingValue = t.ranking(self.id)
+                print("Ranking= ", rankingValue)
+                return ev
+            else:
+                random = 0
+                t.training(random)
+            done = done + 1
+    rankingValue = t.ranking(self.id)
     return ev
     
 #---------------------------DEFINICION DEL MAPA DE HEURISTICAS--------------------------------
