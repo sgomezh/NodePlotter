@@ -11,9 +11,9 @@ import heuristics as h
 
 
 def click_node(NOS,id,n_manipulator):
-    id_first_child = n_manipulator.generate_son(id)
-    for i in range(1,NOS):
-        n_manipulator.generate_son(id)
+    #id_first_child = n_manipulator.generate_son(id)
+    #for i in range(1,NOS):
+        #n_manipulator.generate_son(id)
     
     for i in range(0,NOS):
         if i==0: id_first_child = n_manipulator.generate_son(id)
@@ -41,7 +41,7 @@ def main(heuristic, NOS, mode, N, file):
         done = False
 
         for i in range(N):
-            print("entro al for in range")
+            #print("entro al for in range")
             id = sm.BestState(heuristic)
             if id == None: continue # do nothing
             pos_x, pos_y = n_manipulator.nodes[id].pos
@@ -86,8 +86,11 @@ def main(heuristic, NOS, mode, N, file):
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                done = True
-            if event.type == pygame.MOUSEBUTTONDOWN:
+                pygame.display.quit()
+                pygame.quit()
+                return
+                #done = True
+            elif event.type == pygame.MOUSEBUTTONDOWN:
                 x, y = event.pos
                 id = n_manipulator.get_node_id(x,y)
                 if id == -1 or len(sm.StateMap[id].ChildList) >= sm.StateMap[id].NumActions : #ningun nodo seleccionado (seleccion automatica)
@@ -97,33 +100,33 @@ def main(heuristic, NOS, mode, N, file):
                     
                 click_node(NOS,id,n_manipulator)
                 #n_manipulator.nodes[id_child].color_to(pr.StateColor(id_child))
-        
-
-        pressed = pygame.key.get_pressed()
-        if pressed[pygame.K_w]:
-            n_manipulator.camera.drag(0, 9)
-        if pressed[pygame.K_s]:
-            n_manipulator.camera.drag(0, -9)
-        if pressed[pygame.K_d]:
-            n_manipulator.camera.drag(-9, 0)
-        if pressed[pygame.K_a]:
-            n_manipulator.camera.drag(9, 0)
-        if pressed[pygame.K_z]:
-            n_manipulator.camera.anchura -= 1
-            n_manipulator.update_position()
-        if pressed[pygame.K_x]:
-            n_manipulator.camera.anchura += 1
-            n_manipulator.update_position()
-        if pressed[pygame.K_r]:
-            n_manipulator.camera.altura -= 1
-            n_manipulator.update_position()
-        if pressed[pygame.K_f]:
-            n_manipulator.camera.altura += 1
-            n_manipulator.update_position()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_w:
+                    n_manipulator.camera.drag(0, 9)
+                elif event.key == pygame.K_s:
+                    n_manipulator.camera.drag(0, -9)
+                elif event.key == pygame.K_d:
+                    n_manipulator.camera.drag(-9, 0)
+                elif event.key == pygame.K_a:
+                    n_manipulator.camera.drag(9, 0)
+                elif event.key == pygame.K_z:
+                    n_manipulator.camera.anchura -= 1
+                    n_manipulator.update_position()
+                elif event.key == pygame.K_x:
+                    n_manipulator.camera.anchura += 1
+                    n_manipulator.update_position()
+                elif event.key == pygame.K_r:
+                    n_manipulator.camera.altura -= 1
+                    n_manipulator.update_position()
+                elif event.key == pygame.K_f:
+                    n_manipulator.camera.altura += 1
+                    n_manipulator.update_position()
 
         n_manipulator.update()
 
         screen.fill((33, 33, 33))
         n_manipulator.draw(screen)
         pygame.display.update()
+        
+
         

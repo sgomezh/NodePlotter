@@ -29,35 +29,6 @@ StateMap = {}
 StateMap[0] = state.State(None, 0)
 
 
-# Archivo con árbol de verda
-file1 = open('BR8-0.txt', 'r') 
-count = 0
-
-child_nodes={}
-eval={}
-max_eval=0.0
-while True: 
-    count += 1
-  
-    # Get next line from file 
-    line = file1.readline() 
-    
-    if(count>=20):
-        # if line is empty 
-        # end of file is reached 
-        if not line: 
-            break
-        line= line.strip()
-        elements = line.split(',')
-        if int(elements[1]) not in child_nodes: child_nodes[int(elements[1])]=[]
-        child_nodes[int(elements[1])].append(int(elements[0]))
-        eval[int(elements[0])]= float(elements[2])
-        if float(elements[2]) > max_eval: max_eval=float(elements[2])
-      
-print("max_eval=",max_eval)
-    #if count == 24: break
-file1.close() 
-
 # ----------------------------------------
 
 def BestState(heuristic):
@@ -116,23 +87,7 @@ def compute_parameters(parentEv, mu_parent, sigma_parent, V, id_child):
             firstEv = mu_child
     return firstEv, mu_child, sigma_child, v
 
-def FakeSimulation(ParentKey, ChildKey, NOS):
-    if ParentKey==0:
-        bsg_id=0
-    else: bsg_id = StateMap[ParentKey].bsg_id
-    
-    n_child = len(StateMap[ParentKey].ChildList)
-    
-    id_child = child_nodes[bsg_id][n_child]
-    
-    CreateState(ChildKey, ParentKey, 0, eval[id_child])
-    
-    StateMap[ParentKey].NumActions=len(child_nodes[bsg_id])
-    if id_child in child_nodes: StateMap[ChildKey].NumActions = len(child_nodes[id_child])
-    
-    StateMap[ChildKey].bsg_id = id_child
-    StateMap[ChildKey].V = 1.0
-    
+
 
 # --- Fake simulations ------- #
 def Simulation(ParentKey, ChildKey, NOS):
@@ -148,7 +103,6 @@ def Simulation(ParentKey, ChildKey, NOS):
         firstEv, mu_child, sigma_child, v = compute_parameters(parentEv, mu, sigma, V, id_child)  
         
         CreateState(ChildKey, ParentKey, max_child, firstEv)
-        
         StateMap[ChildKey].mu = mu_child
         StateMap[ChildKey].sigma = sigma_child
         StateMap[ChildKey].V = V-v
