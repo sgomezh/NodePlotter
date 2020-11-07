@@ -93,13 +93,13 @@ class Node:
         animaciones pertinentes
         """
         # Actualizando posicion
-        self.pos[0] += (self.pos_objetive[0] - self.pos[0]) * 0.03
-        self.pos[1] += (self.pos_objetive[1] - self.pos[1]) * 0.03
+        self.pos[0] += (self.pos_objetive[0] - self.pos[0]) * 0.15
+        self.pos[1] += (self.pos_objetive[1] - self.pos[1]) * 0.15
 
-        self.color[0] += (self.color_objetive[0] - self.color[0]) * 0.03
-        self.color[1] += (self.color_objetive[1] - self.color[1]) * 0.03
-        self.color[2] += (self.color_objetive[2] - self.color[2]) * 0.03
-
+        self.color[0] += (self.color_objetive[0] - self.color[0]) * 0.15
+        self.color[1] += (self.color_objetive[1] - self.color[1]) * 0.15
+        self.color[2] += (self.color_objetive[2] - self.color[2]) * 0.15
+        
     def draw(self, surface: pygame.Surface, camera: Camera) -> None:
         """
         Dibuja el nodo en la superficie ingresada como parametro

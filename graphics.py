@@ -102,13 +102,13 @@ def main(heuristic, NOS, mode, N, file):
                 #n_manipulator.nodes[id_child].color_to(pr.StateColor(id_child))
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_w:
-                    n_manipulator.camera.drag(0, 9)
+                    n_manipulator.camera.drag(0, 45)
                 elif event.key == pygame.K_s:
-                    n_manipulator.camera.drag(0, -9)
+                    n_manipulator.camera.drag(0, -45)
                 elif event.key == pygame.K_d:
-                    n_manipulator.camera.drag(-9, 0)
+                    n_manipulator.camera.drag(-45, 0)
                 elif event.key == pygame.K_a:
-                    n_manipulator.camera.drag(9, 0)
+                    n_manipulator.camera.drag(45, 0)
                 elif event.key == pygame.K_z:
                     n_manipulator.camera.anchura -= 1
                     n_manipulator.update_position()
@@ -127,6 +127,7 @@ def main(heuristic, NOS, mode, N, file):
         screen.fill((33, 33, 33))
         n_manipulator.draw(screen)
         pygame.display.update()
+        pygame.time.wait(10) #para no consumir tanto recurso
         
 
         
