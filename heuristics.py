@@ -231,6 +231,13 @@ def tifa2(self):
 
     return ev
 
+# v es vector de parámetros: por ejemplo (A,B,C,D,E)
+def paramaterized_heuristic(self, v):
+    # A*pow(mean,-1)*prob - B*child*TSN*dev
+    return 0
+    
+
+
 def tifa3(self):
     TSN = 0
     minDev = 0.001
