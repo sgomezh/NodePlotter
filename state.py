@@ -211,15 +211,16 @@ class State:
         if Evaluation < State.worstEv:
             State.worstEv = Evaluation
 
+        State.totalSimulations = State.totalSimulations + 1
         State.totalMean = self.globalMean(Evaluation)
         State.totalSquareMean = self.globalSquareMean(Evaluation)
-        State.totalDev = self.globalDev(Evaluation)
-        State.totalSimulations = self.totalSimulations + 1
+        #State.totalDev = self.globalDev(Evaluation)
+
         # Se asigna el numero de acciones y segun la evaluacion se calcula el promedio y la desviacion estandar
         if Actions != -1: self.NumActions = Actions
 
         self.MeanEv = self.Mean(Evaluation)
         self.SquareMeanEv = self.SquareMean(Evaluation)
-        self.StdDev = self.StandardDev(Evaluation)
+        #self.StdDev = self.StandardDev(Evaluation)
         self.CurrentEv = Evaluation
         #self.retropropagation( Evaluation)

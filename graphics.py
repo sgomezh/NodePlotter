@@ -20,7 +20,8 @@ def click_node(NOS,id,n_manipulator):
         else: n_manipulator.generate_son(id)
            
         #print("id_child= ", id_first_child)
-        sm.Simulation(id, id_first_child, NOS)
+        
+    sm.Simulation(id, id_first_child, NOS)
         
     for node in n_manipulator.nodes:
         #node.update()
