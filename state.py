@@ -13,8 +13,8 @@ from scipy.stats import truncnorm
 
 class State:
     id_ = 0
-    bestEv = 0.0
-    worstEv = 100.0
+    bestEv = -1000.0
+    worstEv = 1000.0
     level2selected = {} #Number of nodes selected by level of the tree
     level2nodes = {} #Number of nodes by lebel
     totalMean = 0.0 # Promedio de todas las evaluaciones

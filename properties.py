@@ -70,6 +70,7 @@ def StateColor(key, nb_nodes):
     # Sino, se calcula el color de forma gradual segun su porcentaje en funcion de su mejor y peor evaluacion    
     else:
         Percentage = ((sm.StateMap[key].FirstEv - state.State.worstEv) / (state.State.bestEv - state.State.worstEv))
+        #print(state.State.bestEv,state.State.worstEv)
         #print("percentage= ", Percentage)
         if Percentage < 0.5:
             R= 255; G=int((2*Percentage)*255)
