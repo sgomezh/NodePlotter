@@ -238,20 +238,21 @@ def paramaterized_heuristic(self, v):
     
 
 
-def tifa3(self):
+def hill_climbing(self):
     TSN = 0
     minDev = 0.001
     ev = 0.0
     ln = 0
     x3 = 0
-    done = 0
     vValue = 0
     lastEv = 0
+    bestEv = 0
     variable = 0
     a = 1
     b = 1
     random = 1
     rankingValue = 0
+    no_improvements = 0
     #datos para calcular la probabilidad 
     mean = self.MeanEv
     
@@ -275,40 +276,29 @@ def tifa3(self):
     prob = st.norm.sf(data,mean,dev)
     x3 =  pow(mean,3)
     ln = mt.log(dev)
+ 
+    while no_improvements<50:   
+        #se obtienen valores aleatorios (dentro de un rango) que determina que variable se ajustará
+         #ademas,
+        variable, vValue = t.values(random)
+        #se determina la calidad de la heuristica mediante el ranking
+        rankingValue = t.ranking(self.id)
+############################ REVISAR #########################
+        if lastEv < rankingValue:
+            #dependiendo la variable que haya sido seleccionada, se asignará un nuevo valor random
+            if variable == 1:
+                a = vValue
+            if variable == 2:
+                b = vValue
+            #se actualiza el mejor ranking
+            bestEv = lastEv
+            #se resetea el contador
+            no_improvements = 0
+        else:
+            no_improvements = no_improvements + 1
 
-    variable, vValue = t.training(random)
-    
-    if variable == 1:
-        while done <= 50:
-            a = vValue
-            #ev = x3*prob + ln*child*TSN
-            ev = (x3 + prob * a) + (ln + (child*TSN*b))
+    ev = (x3 + prob * a) + (ln + (child*TSN*b))
 
-            if ev >= lastEv:
-                rankingValue = t.ranking(self.id)
-                print("Ranking= ", rankingValue)
-                return ev
-            else:
-                random = 0
-                t.training(random)
-            done = done + 1
-    
-        
-    if variable == 2:
-        while done <= 50:
-            b = vValue
-            #ev = x3*prob + ln*child*TSN
-            ev = (x3 + prob * a) + (ln + (child*TSN*b))
-
-            if ev >= lastEv:
-                rankingValue = t.ranking(self.id)
-                print("Ranking= ", rankingValue)
-                return ev
-            else:
-                random = 0
-                t.training(random)
-            done = done + 1
-    rankingValue = t.ranking(self.id)
     return ev
     
 #---------------------------DEFINICION DEL MAPA DE HEURISTICAS--------------------------------
@@ -327,7 +317,7 @@ evalMap["CurrentEv_NumSimulations"] = CurrentEv_NumSimulations
 evalMap["mcts"] = mcts
 evalMap["tifa"] = tifa
 evalMap["tifa2"] = tifa2
-evalMap["tifa3"] = tifa3
+evalMap["hill_climbing"] = hill_climbing
 
 
 

@@ -2,7 +2,7 @@ import subprocess
 #se definen algunas variables antes de iterar
 mode= "interactive_mode"    
 NOS= "2"    
-heuristic= "tifa2" 
+heuristic= "hill_climbing" 
 iterations = 10
 evaluationSum = 0   
 pos = 0

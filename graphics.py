@@ -8,7 +8,7 @@ import reader as rd
 import state as st
 import sys
 import heuristics as h
-
+import training as t
 
 def click_node(NOS,id,n_manipulator):
     #id_first_child = n_manipulator.generate_son(id)
@@ -32,6 +32,7 @@ def main(heuristic, NOS, mode, N, file):
 
     #se define la raiz y su color
     raiz = Node([27, 27], [200, 200, 200], 1, 0) 
+    ranking = 1
     
     n_manipulator = node_manipulator.NodeManipulator(raiz)   
 
@@ -45,9 +46,12 @@ def main(heuristic, NOS, mode, N, file):
             #print("entro al for in range")
             id = sm.BestState(heuristic)
             if id == None: continue # do nothing
+            #se imprime la info y se pasa el id del nodo seleccionado
             pos_x, pos_y = n_manipulator.nodes[id].pos
-    
+
+            #simulacion
             click_node(NOS,id,n_manipulator)
+           
 
         print("bestEv: ", st.State.bestEv)   
         n_manipulator.update()
@@ -94,7 +98,8 @@ def main(heuristic, NOS, mode, N, file):
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 x, y = event.pos
                 id = n_manipulator.get_node_id(x,y)
-                
+                #antes de simular, se guarda la información del nodo
+                t.candidateNodes()
                 #ningun nodo seleccionado (seleccion automatica)
                 if id == -1 or len(sm.StateMap[id].ChildList) >= sm.StateMap[id].NumActions : 
                     id = sm.BestState(heuristic)
